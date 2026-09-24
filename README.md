@@ -115,3 +115,54 @@ Secure in-app guardian alert system with role-enforced family link management.
 ### Database Tables Added
 - guardian_alerts with UNIQUE constraint on (guardian_id, report_id, alert_type) to prevent duplicates.
 - Indexes on amily_links.guardian_id, amily_links.dependent_id, guardian_alerts.guardian_id.
+
+## Admin Panel (Step 9)
+A fully server-side authorized admin panel connected to the real MySQL database.
+
+### Admin Role
+- Extended users.role ENUM to ('normal', 'guardian', 'admin').
+- All /api/admin/* endpoints verify session.role == 'admin' server-side.
+- HTTP 401 for unauthenticated; HTTP 403 for authenticated non-admin.
+- The admin panel UI also checks the role from /api/auth/me at load time. This is defense-in-depth only — hiding the UI is NOT considered authorization.
+
+### Admin Endpoints
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/admin/stats | Aggregated overview stats via SQL COUNT |
+| GET | /api/admin/patterns | All scam rules |
+| POST | /api/admin/patterns | Create new rule (regex validated server-side) |
+| PUT | /api/admin/patterns/{id} | Update rule |
+| PATCH | /api/admin/patterns/{id}/status | Enable/disable rule |
+| GET | /api/admin/community | Paginated community flags |
+| PATCH | /api/admin/community/{id}/status | Set flag active/removed |
+| GET | /api/admin/users | Paginated user list (search + role filter) |
+| PATCH | /api/admin/users/{id}/role | Change normal↔guardian (admin promotion blocked) |
+| GET | /api/admin/scans | Paginated scan activity (verdict + type filter) |
+| GET | /api/admin/scans/{id} | Scan detail including raw input and matched rules |
+| GET | /api/admin/audit-logs | Paginated admin audit trail |
+
+### Scam Rule Management
+- scam_patterns.is_active column added; scanner (ScamPatternDAO.findByCategory) only returns active rules.
+- Invalid regex is compiled server-side (Pattern.compile) before saving — rejected with HTTP 400.
+- Admin can enable/disable rules without deleting them (preserves historical scan explanations).
+
+### Community Moderation
+- community_flags.status column (ctive/emoved) added.
+- CommunityFlagDAO.findByFlaggedValue now filters WHERE status = 'active' — removed flags are invisible to the scanner.
+- Historical community_reports audit records are preserved even when a flag is removed.
+
+### User Management
+- Admins can search users by name/email and filter by role.
+- Role changes are limited to 
+ormal ↔ guardian. Promoting to dmin is explicitly blocked.
+- Last admin protection: checked before any role change.
+
+### Audit Logging
+- dmin_audit_logs table records every mutation: RULE_CREATED, RULE_UPDATED, RULE_ENABLED, RULE_DISABLED, COMMUNITY_FLAG_REMOVED, COMMUNITY_FLAG_RESTORED, USER_ROLE_CHANGED.
+- Mutations + audit log write are wrapped in a single JDBC transaction — a failed primary operation does not create a misleading audit entry.
+
+### Security
+- Admin functionality is server-side authorized; hiding UI controls is NOT considered authorization.
+- All DAO queries use PreparedStatements; no SQL concatenation anywhere.
+- User search uses parameterized LIKE clauses.
+- dmin.js uses esc() for all dynamic DOM text rendering — no innerHTML with raw API data.

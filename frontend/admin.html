@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SurakshaScan</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f2f5; display: none; }
+
+        /* Layout */
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; background: #001f4d; color: #fff; flex-shrink: 0; display: flex; flex-direction: column; }
+        .sidebar-brand { padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-brand h2 { margin: 0; font-size: 16px; }
+        .sidebar-brand small { color: #7f9fc4; font-size: 12px; }
+        .sidebar nav a { display: block; padding: 12px 16px; color: #cdd8e8; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; transition: all 0.15s; }
+        .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.08); color: #fff; border-left-color: #4e9fff; }
+        .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-footer a { color: #cdd8e8; font-size: 13px; text-decoration: none; }
+
+        .content { flex: 1; overflow-x: hidden; }
+        .topbar { background: #fff; padding: 14px 24px; border-bottom: 1px solid #dde1e7; display: flex; justify-content: space-between; align-items: center; }
+        .topbar h1 { margin: 0; font-size: 18px; color: #333; }
+        .topbar-user { font-size: 13px; color: #666; }
+        .main { padding: 24px; }
+
+        /* Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-left: 4px solid #4e9fff; }
+        .stat-card h4 { margin: 0 0 8px 0; font-size: 12px; color: #888; text-transform: uppercase; font-weight: 600; }
+        .stat-card .num { font-size: 28px; font-weight: 700; color: #001f4d; }
+
+        /* Section */
+        .section { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .section-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .section-header h3 { margin: 0; font-size: 15px; color: #222; }
+        .section-body { padding: 0; overflow-x: auto; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 10px 16px; background: #f8f9fb; color: #666; font-weight: 600; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #eee; }
+        td { padding: 11px 16px; border-bottom: 1px solid #f0f0f0; color: #333; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafbfd; }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        .badge-safe { background: #d4edda; color: #155724; }
+        .badge-suspicious { background: #fff3cd; color: #856404; }
+        .badge-risk { background: #f8d7da; color: #721c24; }
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-removed { background: #e2e3e5; color: #383d41; }
+        .badge-on { background: #cce5ff; color: #004085; }
+        .badge-off { background: #e2e3e5; color: #383d41; }
+
+        /* Buttons */
+        .btn { padding: 7px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+        .btn-primary { background: #0056b3; color: #fff; }
+        .btn-danger  { background: #dc3545; color: #fff; }
+        .btn-success { background: #28a745; color: #fff; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-secondary { background: #6c757d; color: #fff; }
+        .btn:hover { opacity: 0.88; }
+
+        /* Filters */
+        .filters { padding: 12px 20px; background: #f8f9fb; border-bottom: 1px solid #eee; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .filters input, .filters select { padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+        .filters input { min-width: 200px; }
+
+        /* Pagination */
+        .pagination { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #666; border-top: 1px solid #eee; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: #fff; border-radius: 8px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 16px; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 12px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; }
+        .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #999; line-height: 1; }
+
+        /* Form */
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #555; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .form-group textarea { min-height: 70px; resize: vertical; }
+        .msg { padding: 8px 12px; border-radius: 4px; font-size: 13px; margin-top: 10px; }
+        .msg-ok { background: #d4edda; color: #155724; }
+        .msg-err { background: #f8d7da; color: #721c24; }
+
+        /* Sidebar toggle for mobile */
+        .menu-toggle { display: none; background: #001f4d; color: #fff; border: none; padding: 10px 16px; font-size: 20px; cursor: pointer; }
+
+        /* Views */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* Empty state */
+        .empty { padding: 40px; text-align: center; color: #aaa; font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -220px; top: 0; bottom: 0; z-index: 200; transition: left 0.25s; }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .topbar { padding: 10px 14px; }
+            .main { padding: 14px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body id="pageBody">
+<div class="layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h2>SurakshaScan</h2>
+            <small>Admin Panel</small>
+        </div>
+        <nav>
+            <a href="#" class="active" data-view="overview">📊 Overview</a>
+            <a href="#" data-view="patterns">🛡 Scam Rules</a>
+            <a href="#" data-view="community">🚩 Community</a>
+            <a href="#" data-view="users">👥 Users</a>
+            <a href="#" data-view="scans">🔍 Scan Activity</a>
+            <a href="#" data-view="audit">📋 Audit Log</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="dashboard.html">← Back to App</a>
+        </div>
+    </aside>
+
+    <div class="content">
+        <div class="topbar">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 id="viewTitle">Overview</h1>
+            </div>
+            <div class="topbar-user">Admin: <strong id="adminName"></strong> | <a href="#" id="logoutLink" style="color:#dc3545;text-decoration:none;font-weight:bold;">Logout</a></div>
+        </div>
+
+        <div class="main">
+
+            <!-- Overview -->
+            <div class="view active" id="view-overview">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card"><h4>Total Users</h4><div class="num" id="s-users">–</div></div>
+                    <div class="stat-card"><h4>Total Scans</h4><div class="num" id="s-scans">–</div></div>
+                    <div class="stat-card" style="border-left-color:#dc3545;"><h4>High Risk Scans</h4><div class="num" id="s-highrisk">–</div></div>
+                    <div class="stat-card" style="border-left-color:#ffc107;"><h4>Community Flags</h4><div class="num" id="s-flags">–</div></div>
+                    <div class="stat-card" style="border-left-color:#6c757d;"><h4>Pending Links</h4><div class="num" id="s-links">–</div></div>
+                </div>
+                <div class="section">
+                    <div class="section-header"><h3>Recent Scan Activity</h3></div>
+                    <div class="section-body"><div id="overviewRecentScans"><div class="empty">Loading…</div></div></div>
+                </div>
+            </div>
+
+            <!-- Scam Rules -->
+            <div class="view" id="view-patterns">
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Scam Detection Rules</h3>
+                        <button class="btn btn-primary" id="btnCreatePattern">+ New Rule</button>
+                    </div>
+                    <div class="section-body"><div id="patternsTable"><div class="empty">Loading…</div></div></div>
+                </div>
+            </div>
+
+            <!-- Community -->
+            <div class="view" id="view-community">
+                <div class="section">
+                    <div class="section-header"><h3>Community Flags</h3></div>
+                    <div class="filters">
+                        <button class="btn btn-sm btn-primary" id="loadCommunityBtn">Refresh</button>
+                    </div>
+                    <div class="section-body"><div id="communityTable"><div class="empty">Loading…</div></div></div>
+                    <div class="pagination" id="communityPager"></div>
+                </div>
+            </div>
+
+            <!-- Users -->
+            <div class="view" id="view-users">
+                <div class="section">
+                    <div class="section-header"><h3>User Management</h3></div>
+                    <div class="filters">
+                        <input type="text" id="userSearch" placeholder="Search name or email…">
+                        <select id="userRoleFilter">
+                            <option value="all">All Roles</option>
+                            <option value="normal">Normal</option>
+                            <option value="guardian">Guardian</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" id="searchUsersBtn">Search</button>
+                    </div>
+                    <div class="section-body"><div id="usersTable"><div class="empty">Loading…</div></div></div>
+                    <div class="pagination" id="usersPager"></div>
+                </div>
+            </div>
+
+            <!-- Scans -->
+            <div class="view" id="view-scans">
+                <div class="section">
+                    <div class="section-header"><h3>Scan Activity</h3></div>
+                    <div class="filters">
+                        <select id="scanVerdictFilter">
+                            <option value="all">All Verdicts</option>
+                            <option value="SAFE">Safe</option>
+                            <option value="SUSPICIOUS">Suspicious</option>
+                            <option value="HIGH RISK">High Risk</option>
+                        </select>
+                        <select id="scanTypeFilter">
+                            <option value="all">All Types</option>
+                            <option value="sms">SMS</option>
+                            <option value="upi">UPI</option>
+                            <option value="link">Link</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary" id="filterScansBtn">Filter</button>
+                    </div>
+                    <div class="section-body"><div id="scansTable"><div class="empty">Loading…</div></div></div>
+                    <div class="pagination" id="scansPager"></div>
+                </div>
+            </div>
+
+            <!-- Audit Log -->
+            <div class="view" id="view-audit">
+                <div class="section">
+                    <div class="section-header"><h3>Admin Audit Log</h3></div>
+                    <div class="section-body"><div id="auditTable"><div class="empty">Loading…</div></div></div>
+                    <div class="pagination" id="auditPager"></div>
+                </div>
+            </div>
+
+        </div><!-- /main -->
+    </div><!-- /content -->
+</div><!-- /layout -->
+
+<!-- Pattern Modal -->
+<div class="modal-overlay" id="patternModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="patternModalTitle">New Rule</h3>
+            <button class="close-btn" onclick="closeModal('patternModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editPatternId">
+            <div class="form-group"><label>Category</label>
+                <select id="fCategory"><option value="sms">SMS</option><option value="upi">UPI</option><option value="link">Link</option><option value="call">Call</option></select>
+            </div>
+            <div class="form-group"><label>Pattern Type</label>
+                <select id="fType"><option value="keyword">Keyword</option><option value="regex">Regex</option></select>
+            </div>
+            <div class="form-group"><label>Pattern Text</label><input type="text" id="fText" maxlength="500" placeholder="e.g. urgent kyc or (?i)kyc.*block"></div>
+            <div class="form-group"><label>Risk Weight (1–100)</label><input type="number" id="fWeight" min="1" max="100" value="20"></div>
+            <div class="form-group"><label>Description</label><textarea id="fDesc" maxlength="1000" placeholder="Describe what this pattern detects"></textarea></div>
+            <div id="patternMsg"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('patternModal')">Cancel</button>
+            <button class="btn btn-primary" id="savePatternBtn">Save Rule</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scan Detail Modal -->
+<div class="modal-overlay" id="scanDetailModal">
+    <div class="modal" style="width:560px;">
+        <div class="modal-header">
+            <h3>Scan Detail</h3>
+            <button class="close-btn" onclick="closeModal('scanDetailModal')">×</button>
+        </div>
+        <div class="modal-body" id="scanDetailBody">Loading…</div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAuthAndInit((user) => {
+            if (user.role !== 'admin') {
+                document.body.style.display = 'block';
+                document.body.innerHTML = '<div style="padding:60px;text-align:center;font-family:Arial;"><h2 style="color:#dc3545;">Access Denied</h2><p>You do not have admin privileges.</p><a href="dashboard.html">Return to App</a></div>';
+                return;
+            }
+            document.getElementById('pageBody').style.display = 'block';
+            document.getElementById('adminName').textContent = user.name;
+            initAdmin();
+        });
+        document.getElementById('logoutLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await authenticatedFetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = 'login.html';
+        });
+    });
+</script>
+</body>
+</html>

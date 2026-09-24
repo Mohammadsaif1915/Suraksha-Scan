@@ -1,11 +1,12 @@
-﻿package com.surakshascan.dao;
+package com.surakshascan.dao;
 import com.surakshascan.model.CommunityFlag;
 import com.surakshascan.util.DatabaseConnection;
 import java.sql.*;
 
 public class CommunityFlagDAO {
     public CommunityFlag findByFlaggedValue(String value) {
-        String sql = "SELECT * FROM community_flags WHERE flagged_value = ?";
+        // Scanner only sees ACTIVE flags; removed flags are ignored
+        String sql = "SELECT * FROM community_flags WHERE flagged_value = ? AND status = 'active'";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
