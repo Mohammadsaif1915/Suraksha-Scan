@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan - SurakshaScan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
+        header { background: #002b5e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;}
+        header h2 { margin: 0; }
+        main { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ccc; }
+        .tab { padding: 10px 20px; cursor: pointer; background: #eaeaea; border: none; outline: none; margin-right: 5px; border-radius: 5px 5px 0 0; font-size: 16px;}
+        .tab.active { background: #0056b3; color: white; }
+        .scan-form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .scan-form h3 { margin-top: 0; }
+        textarea, input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; font-family: inherit;}
+        textarea { resize: vertical; min-height: 120px; }
+        button.scan-btn { margin-top: 15px; width: 100%; padding: 12px; background: #0056b3; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button.scan-btn:disabled { background: #999; cursor: not-allowed; }
+        .result-card { margin-top: 20px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; }
+        .safe { border-left: 6px solid #28a745; }
+        .suspicious { border-left: 6px solid #ffc107; }
+        .high-risk { border-left: 6px solid #dc3545; }
+        .result-header { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .safe .result-header { color: #28a745; }
+        .suspicious .result-header { color: #d39e00; }
+        .high-risk .result-header { color: #dc3545; }
+        .error-msg { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: none;}
+        .rule-item { background: #f9f9f9; padding: 10px; border-left: 4px solid #0056b3; margin-top: 10px; font-size: 14px;}
+        .disclaimer { font-size: 12px; color: #777; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body style="display:none;" id="scanBody">
+    <header>
+        <h2>SurakshaScan Scanner</h2>
+        <a href="dashboard.html" style="color: #fff; text-decoration: none; font-size: 14px;">&larr; Back to Dashboard</a>
+    </header>
+    <main>
+        <div class="tabs">
+            <button class="tab active" data-type="sms">SMS Text</button>
+            <button class="tab" data-type="upi">UPI ID</button>
+            <button class="tab" data-type="link">URL / Link</button>
+        </div>
+        
+        <div class="scan-form">
+            <h3 id="inputTitle">Scan SMS Text</h3>
+            <div id="errorMsg" class="error-msg"></div>
+            <textarea id="scanContentSms" placeholder="Paste suspicious SMS text here..." maxlength="1000"></textarea>
+            <input type="text" id="scanContentUpi" placeholder="e.g. username@bank" style="display: none;" maxlength="255">
+            <input type="text" id="scanContentLink" placeholder="e.g. https://suspicious-site.com" style="display: none;" maxlength="1000">
+            
+            <button id="scanBtn" class="scan-btn">Analyze Now</button>
+        </div>
+
+        <div id="resultCard" class="result-card">
+            <div id="resultVerdict" class="result-header"></div>
+            <div style="font-weight: bold; margin-bottom: 10px; font-size: 18px;">Risk Score: <span id="riskScore"></span></div>
+            <p id="resultSummary" style="font-size: 16px; margin-bottom: 15px;"></p>
+            <h4 style="margin-bottom: 5px; color: #333;">Explanations:</h4>
+            <div id="rulesList"></div>
+            <div class="disclaimer">Detection is based on known scam indicators and community reports. A Safe result does not guarantee that an item is legitimate.</div>
+        </div>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/scanner.js"></script>
+</body>
+</html>
+
+

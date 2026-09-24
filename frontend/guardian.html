@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Safety - SurakshaScan</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; display: none; }
+        header { background: #002b5e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        nav a { color: #fff; margin-right: 15px; text-decoration: none; font-size: 15px; }
+        nav a:hover { text-decoration: underline; }
+        .user-area { display: flex; align-items: center; }
+        .logout-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        main { padding: 20px; max-width: 1000px; margin: 0 auto; }
+
+        .section-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .section-card h3 { margin-top: 0; color: #002b5e; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        .form-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .form-row input { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+        .btn { padding: 10px 18px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .btn-primary { background: #0056b3; color: #fff; }
+        .btn-success { background: #28a745; color: #fff; }
+        .btn-danger { background: #dc3545; color: #fff; }
+        .btn-secondary { background: #6c757d; color: #fff; }
+        .btn:disabled { background: #aaa; cursor: not-allowed; }
+
+        .msg-box { padding: 10px 15px; border-radius: 4px; margin-top: 10px; font-weight: bold; display: none; }
+        .msg-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .msg-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .link-list, .alert-list { list-style: none; padding: 0; margin: 0; }
+        .link-item, .alert-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 10px; }
+        .link-item:last-child, .alert-item:last-child { border-bottom: none; }
+        .link-info, .alert-info { flex: 1; }
+        .link-info strong, .alert-info strong { display: block; color: #333; }
+        .link-info small, .alert-info small { color: #777; font-size: 12px; }
+        .link-actions { display: flex; gap: 8px; align-items: center; }
+
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; }
+        .badge-pending { background: #ffc107; color: #333; }
+        .badge-active { background: #28a745; }
+        .badge-high-risk { background: #dc3545; }
+        .badge-unread { background: #dc3545; }
+
+        .alert-score { font-size: 22px; font-weight: bold; color: #dc3545; margin-right: 10px; }
+        .empty-state { padding: 30px; text-align: center; color: #888; }
+
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; }
+            .link-item, .alert-item { flex-direction: column; }
+        }
+    </style>
+</head>
+<body id="pageBody">
+    <header>
+        <div style="display:flex;align-items:center;">
+            <h1>SurakshaScan</h1>
+            <nav style="margin-left:30px;">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="scan.html">Scanner</a>
+                <a href="history.html">History</a>
+                <a href="awareness.html">Awareness</a>
+                <a href="community.html">Community</a>
+                <a href="guardian.html" style="text-decoration:underline;">Family Safety</a>
+            </nav>
+        </div>
+        <div class="user-area">
+            <span id="headerUser" style="margin-right:15px;font-weight:bold;"></span>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <main id="mainContent">
+        <!-- Rendered by guardian.js based on role -->
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/guardian.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndInit((user) => {
+                document.getElementById('pageBody').style.display = 'block';
+                document.getElementById('headerUser').innerText = user.name;
+                initGuardianPage(user);
+            });
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await authenticatedFetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SurakshaScan</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; display: none; }
+        header { background: #002b5e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        nav a { color: #fff; margin-right: 15px; text-decoration: none; font-size: 15px; }
+        nav a:hover { text-decoration: underline; }
+        .user-area { display: flex; align-items: center; }
+        .logout-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        main { padding: 20px; max-width: 1000px; margin: 0 auto; }
+        
+        .welcome-sec { margin-bottom: 25px; }
+        .welcome-sec h2 { margin: 0 0 10px 0; color: #333; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card h3 { margin: 0 0 10px 0; font-size: 16px; color: #666; }
+        .stat-card .val { font-size: 28px; font-weight: bold; color: #002b5e; }
+        .stat-safe .val { color: #28a745; }
+        .stat-susp .val { color: #d39e00; }
+        .stat-high .val { color: #dc3545; }
+        
+        .scan-action { background: #0056b3; color: #fff; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .scan-action p { margin-top: 0; font-size: 16px; }
+        .scan-action a { display: inline-block; background: #fff; color: #0056b3; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 16px;}
+        
+        .recent-scans { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .recent-scans h3 { margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between;}
+        .recent-scans h3 a { font-size: 14px; color: #0056b3; text-decoration: none; font-weight: normal; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; font-size: 14px;}
+        th { color: #555; background-color: #f9f9f9;}
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; text-transform: capitalize; }
+        .badge.safe { background: #28a745; }
+        .badge.suspicious { background: #ffc107; color: #333; }
+        .badge.high_risk { background: #dc3545; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #666; }
+        
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            table, thead, tbody, th, td, tr { display: block; }
+            th { display: none; }
+            td { position: relative; padding-left: 50%; text-align: right; border-bottom: 1px solid #eee; }
+            td::before { content: attr(data-label); position: absolute; left: 15px; width: 45%; text-align: left; font-weight: bold; }
+        }
+    </style>
+</head>
+<body id="pageBody">
+    <header>
+        <div style="display:flex; align-items: center;">
+            <h1>SurakshaScan</h1>
+            <nav style="margin-left: 30px;">
+                <a href="dashboard.html" style="text-decoration: underline;">Dashboard</a>
+                <a href="scan.html">Scanner</a>
+                <a href="history.html">History</a>
+                <a href="awareness.html">Awareness</a>
+                <a href="community.html">Community</a>
+                <a href="guardian.html">Family Safety</a>
+            </nav>
+        </div>
+        <div class="user-area">
+            <span id="userName" style="margin-right: 15px; font-weight:bold;"></span>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="welcome-sec">
+            <h2>Welcome back, <span id="welcomeName"></span>!</h2>
+            <p style="color:#666; margin:0;">Here is your account security overview.</p>
+        </div>
+
+        <div class="scan-action">
+            <p>Received a suspicious message or link?</p>
+            <a href="scan.html">Scan Something Suspicious</a>
+        </div>
+        
+        <div id="familyCard"></div>
+
+                <div class="scan-action" style="background: #e9ecef; color: #333; margin-top: 30px;">
+            <h3 style="margin-top: 0;">Learn to Spot Scams</h3>
+            <p style="color: #555;">Understand common scam tactics and how to respond safely.</p>
+            <a href="awareness.html" style="background: #002b5e; color: #fff;">Visit Awareness Center</a>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Scans</h3>
+                <div class="val" id="statTotal">0</div>
+            </div>
+            <div class="stat-card stat-safe">
+                <h3>Safe</h3>
+                <div class="val" id="statSafe">0</div>
+            </div>
+            <div class="stat-card stat-susp">
+                <h3>Suspicious</h3>
+                <div class="val" id="statSusp">0</div>
+            </div>
+            <div class="stat-card stat-high">
+                <h3>High Risk</h3>
+                <div class="val" id="statHigh">0</div>
+            </div>
+        </div>
+
+        <div class="recent-scans">
+            <h3>Recent Scans <a href="history.html">View All &rarr;</a></h3>
+            <div id="recentContent">
+                <div class="empty-state">Loading...</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndInit((user) => {
+                document.getElementById('pageBody').style.display = 'block';
+                document.getElementById('userName').innerText = user.name;
+                document.getElementById('welcomeName').innerText = user.name.split(' ')[0];
+                
+                loadStats();
+                loadRecentScans();
+                loadFamilyCard(user);
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await authenticatedFetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = 'login.html';
+            });
+        });
+
+        async function loadStats() {
+            const data = await authenticatedFetch('/api/dashboard/stats');
+            if (data && data.success) {
+                document.getElementById('statTotal').innerText = data.stats.totalScans;
+                document.getElementById('statSafe').innerText = data.stats.safe;
+                document.getElementById('statSusp').innerText = data.stats.suspicious;
+                document.getElementById('statHigh').innerText = data.stats.highRisk;
+            }
+        }
+
+        async function loadRecentScans() {
+            const data = await authenticatedFetch('/api/history?limit=5');
+            const container = document.getElementById('recentContent');
+            if (data && data.success) {
+                if (data.history.length === 0) {
+                    container.innerHTML = `<div class="empty-state">
+                        <p>No scans yet.</p>
+                        <p>Scan your first suspicious message, UPI ID, or link.</p>
+                        <br><a href="scan.html" style="background:#0056b3;color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:bold;">Scan Now</a>
+                    </div>`;
+                    return;
+                }
+                
+                let html = `<table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Score</th>
+                            <th>Verdict</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                data.history.forEach(scan => {
+                    const date = new Date(scan.createdAt).toLocaleDateString();
+                    const vClass = scan.verdict.toLowerCase().replace(' ', '_');
+                    html += `<tr>
+                        <td data-label="Date">${date}</td>
+                        <td data-label="Type" style="text-transform:uppercase;">${scan.inputType}</td>
+                        <td data-label="Score">${scan.riskScore}</td>
+                        <td data-label="Verdict"><span class="badge ${vClass}">${scan.verdict}</span></td>
+                        <td data-label="Action"><a href="history.html" style="color:#0056b3; text-decoration:none; font-weight:bold;">View</a></td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+            }
+        }
+
+        async function loadFamilyCard(user) {
+            const card = document.getElementById('familyCard');
+            if (!card) return;
+            if (user.role === 'guardian') {
+                const linksData = await authenticatedFetch('/api/guardian/links');
+                const countData = await authenticatedFetch('/api/guardian/alerts/unread-count');
+                const members = (linksData && linksData.links) ? linksData.links.length : 0;
+                const unread = (countData && countData.unreadCount) ? countData.unreadCount : 0;
+                card.innerHTML = `
+                    <div class="scan-action" style="background:#1a3a5c; margin-bottom:20px;">
+                        <h3 style="margin-top:0;">Family Safety</h3>
+                        <p style="font-size:14px;">Linked members: <strong>${members}</strong>&nbsp;&nbsp;Unread alerts: <strong>${unread > 0 ? '<span style="color:#ff6b6b;">' + unread + '</span>' : '0'}</strong></p>
+                        <a href="guardian.html" style="background:#fff;color:#002b5e;">Manage Family Safety</a>
+                    </div>`;
+            } else {
+                const reqData = await authenticatedFetch('/api/guardian/requests');
+                const pending = (reqData && reqData.requests) ? reqData.requests.length : 0;
+                const linksData = await authenticatedFetch('/api/guardian/links');
+                const active = (linksData && linksData.links) ? linksData.links.length : 0;
+                card.innerHTML = `
+                    <div class="scan-action" style="background:#1a3a5c; margin-bottom:20px;">
+                        <h3 style="margin-top:0;">Family Protection</h3>
+                        <p style="font-size:14px;">${pending > 0 ? '<span style="color:#ffc107;">⚠ ' + pending + ' pending guardian request(s)</span>' : 'Active guardian' + (active > 0 ? ': Yes' : ': None linked')}</p>
+                        <a href="guardian.html" style="background:#fff;color:#002b5e;">View Family Settings</a>
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

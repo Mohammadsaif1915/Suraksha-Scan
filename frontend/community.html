@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Reporting - SurakshaScan</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; display: none; }
+        header { background: #002b5e; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        nav a { color: #fff; margin-right: 15px; text-decoration: none; font-size: 15px; }
+        nav a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 600px; margin: 0 auto; }
+        
+        .report-card { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .report-card h2 { margin-top: 0; color: #333; }
+        .info-box { background: #e9ecef; color: #495057; padding: 15px; border-left: 4px solid #6c757d; border-radius: 4px; font-size: 14px; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        select, input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        
+        button.submit-btn { width: 100%; padding: 12px; background: #dc3545; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        button.submit-btn:disabled { background: #999; cursor: not-allowed; }
+        
+        .msg-box { margin-top: 15px; padding: 12px; border-radius: 4px; display: none; font-weight: bold; text-align: center; }
+        .msg-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .msg-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body id="pageBody">
+    <header>
+        <div style="display:flex; align-items: center;">
+            <h1>SurakshaScan</h1>
+            <nav style="margin-left: 30px;">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="scan.html">Scanner</a>
+                <a href="history.html">History</a>
+                <a href="awareness.html">Awareness</a>`n                <a href="community.html" style="text-decoration: underline;">Community</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="report-card">
+            <h2>Report Suspicious Item</h2>
+            <div class="info-box">
+                Community reports help identify repeatedly reported scam indicators. A report is an indicator and does not by itself prove wrongdoing.
+            </div>
+            
+            <div id="msgBox" class="msg-box"></div>
+            
+            <div class="form-group">
+                <label>Item Type</label>
+                <select id="reportType">
+                    <option value="phone">Phone Number</option>
+                    <option value="upi">UPI ID</option>
+                    <option value="domain">Domain / Link</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Suspicious Identifier</label>
+                <input type="text" id="reportValue" placeholder="Enter phone, UPI, or URL..." maxlength="255">
+            </div>
+            
+            <button id="submitBtn" class="submit-btn">Submit Report</button>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndInit(() => {
+                document.getElementById('pageBody').style.display = 'block';
+                
+                // Prefill if query params exist
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('type')) {
+                    const type = params.get('type') === 'link' ? 'domain' : (params.get('type') === 'sms' ? 'phone' : params.get('type'));
+                    document.getElementById('reportType').value = type;
+                }
+                if (params.get('value')) {
+                    document.getElementById('reportValue').value = params.get('value');
+                }
+            });
+
+            document.getElementById('submitBtn').addEventListener('click', async () => {
+                const type = document.getElementById('reportType').value;
+                const value = document.getElementById('reportValue').value.trim();
+                const msgBox = document.getElementById('msgBox');
+                const btn = document.getElementById('submitBtn');
+                
+                if (!value) {
+                    showMsg('Please enter a valid phone number, UPI ID, or domain.', false);
+                    return;
+                }
+                
+                btn.disabled = true;
+                btn.innerText = 'Submitting...';
+                
+                try {
+                    const data = await authenticatedFetch('/api/community/report', {
+                        method: 'POST',
+                        body: { type, value }
+                    });
+                    
+                    if (data && data.success) {
+                        let msg = 'Report submitted successfully.';
+                        if (data.community && data.community.reportCount) {
+                            msg += <br><span style="font-size:13px; color:#555;">Community reports: \</span>;
+                        }
+                        showMsg(msg, true);
+                        document.getElementById('reportValue').value = '';
+                    } else if (data) {
+                        showMsg(data.message || 'Error submitting report.', false);
+                    }
+                } catch (e) {
+                    showMsg('Network error occurred.', false);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = 'Submit Report';
+                }
+            });
+            
+            function showMsg(html, isSuccess) {
+                const msgBox = document.getElementById('msgBox');
+                msgBox.innerHTML = html;
+                msgBox.className = 'msg-box ' + (isSuccess ? 'msg-success' : 'msg-error');
+                msgBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+
