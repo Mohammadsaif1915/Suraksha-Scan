@@ -616,51 +616,10 @@
             emailError.style.display = (this.value.length > 0 && !ok) ? 'block' : 'none';
         });
 
-        const form = document.getElementById('registerForm');
-        const errBox = document.getElementById('registerError');
-        const successBox = document.getElementById('registerSuccess');
-        const btn = document.getElementById('registerBtn');
-        const btnText = btn.querySelector('.btn-text');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            errBox.style.display = 'none';
-            successBox.style.display = 'none';
-
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const email = emailInput.value.trim();
-            const password = pwInput.value;
-
-            if (!firstName || !lastName || !email || !password) {
-                errBox.textContent = 'Please fill in all required fields.';
-                errBox.style.display = 'block';
-                return;
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                errBox.textContent = 'Please enter a valid email address.';
-                errBox.style.display = 'block';
-                return;
-            }
-            if (password.length < 8) {
-                errBox.textContent = 'Password must be at least 8 characters long.';
-                errBox.style.display = 'block';
-                return;
-            }
-
-            btn.classList.add('loading');
-            btn.disabled = true;
-            btnText.textContent = 'Creating account...';
-
-            setTimeout(() => {
-                btn.classList.remove('loading');
-                btn.disabled = false;
-                btnText.textContent = 'Create Account';
-                successBox.textContent = 'This is a design preview — connect a signup API to create real accounts. Redirecting to sign in...';
-                successBox.style.display = 'block';
-            }, 1100);
-        });
     </script>
+    <script src="js/env-config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 
 </html>

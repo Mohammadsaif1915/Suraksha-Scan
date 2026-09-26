@@ -61,10 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name     = document.getElementById('regName').value.trim();
-            const email    = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const role     = document.getElementById('regRole').value;
+            const fName = document.getElementById('firstName');
+            const lName = document.getElementById('lastName');
+            const name  = (fName && lName) ? `${fName.value.trim()} ${lName.value.trim()}` : (document.getElementById('regName')?.value.trim() || '');
+            const emailEl = document.getElementById('email') || document.getElementById('regEmail');
+            const email = emailEl ? emailEl.value.trim() : '';
+            const pwdEl = document.getElementById('password') || document.getElementById('regPassword');
+            const password = pwdEl ? pwdEl.value : '';
+            const roleEl = document.getElementById('regRole');
+            const role = roleEl ? roleEl.value : 'normal';
 
             const errorDiv  = document.getElementById('registerError');
             const successDiv = document.getElementById('registerSuccess');

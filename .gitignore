@@ -16,6 +16,7 @@ logs/
 # Sensitive configuration (NEVER commit credentials)
 backend/src/main/resources/application.properties
 .env
+.env.*
 config.properties
 database.properties
 
@@ -25,3 +26,14 @@ database.properties
 
 # OS files
 Thumbs.db
+
+# Bundled servers (large, not needed in repo)
+apache-tomcat-*/
+apache-maven-*/
+
+# Docker
+*.tar
+
+# Python
+__pycache__/
+*.pyc

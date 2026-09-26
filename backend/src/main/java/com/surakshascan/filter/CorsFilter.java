@@ -18,8 +18,12 @@ public class CorsFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         
+        String allowedOrigin = System.getenv("FRONTEND_URL");
         String origin = req.getHeader("Origin");
-        if (origin != null) {
+        
+        if (allowedOrigin != null && !allowedOrigin.trim().isEmpty()) {
+            res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+        } else if (origin != null) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         } else {
             res.setHeader("Access-Control-Allow-Origin", "*");

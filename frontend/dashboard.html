@@ -696,9 +696,29 @@
         </div>
     </main>
 
+    <script src="js/env-config.js"></script>
+    <script src="js/api.js"></script>
     <script>
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
         document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndInit((user) => {
+                const nameEl = document.getElementById('sidebarUserName');
+                if (nameEl) nameEl.innerText = user.name;
+                
+                // Real dashboard stats would be fetched here using authenticatedFetch('/api/dashboard/stats')
+            });
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.removeAttribute('onclick');
+                logoutBtn.addEventListener('click', async () => {
+                    await authenticatedFetch('/api/auth/logout', { method: 'POST' });
+                    window.location.href = 'login.html';
+                });
+            }
+        });
     </script>
 </body>
 

@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Frontend (not needed in backend image)
+frontend/
+
+# Database scripts (not needed in image)
+database/
+
+# Scripts
+scripts/
+
+# Bundled servers
+apache-tomcat-*/
+apache-maven-*/
+
+# Documentation
+*.md
+
+# Build artifacts (will be rebuilt)
+target/
+
+# Logs
+*.log
+logs/
+
+# Sensitive files
+.env
+.env.*
+*.properties
+!backend/src/main/resources/application.properties
+
+# PowerShell deploy scripts
+*.ps1
+*.bat
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Misc
+AdminHash.java
+.kilo/

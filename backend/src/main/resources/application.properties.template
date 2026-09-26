@@ -1,0 +1,7 @@
+# application.properties.template
+# Copy this file to application.properties and fill in your values.
+# NEVER commit application.properties to version control.
+
+db.url=jdbc:mysql://localhost:3306/surakshascan
+db.username=root
+db.password=

@@ -23,10 +23,21 @@ public class DatabaseConnection {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-            properties.getProperty("db.url"),
-            properties.getProperty("db.username"),
-            properties.getProperty("db.password")
-        );
+        String url = System.getenv("DB_URL");
+        if (url == null || url.trim().isEmpty()) {
+            url = properties.getProperty("db.url");
+        }
+        
+        String user = System.getenv("DB_USER");
+        if (user == null || user.trim().isEmpty()) {
+            user = properties.getProperty("db.username");
+        }
+        
+        String password = System.getenv("DB_PASSWORD");
+        if (password == null) {
+            password = properties.getProperty("db.password");
+        }
+        
+        return DriverManager.getConnection(url, user, password);
     }
 }

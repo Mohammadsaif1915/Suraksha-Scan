@@ -486,40 +486,9 @@
         </div>
     </section>
 
-    <script>
-        const form = document.getElementById('loginForm');
-        const errBox = document.getElementById('loginError');
-        const btn = document.getElementById('loginBtn');
-        const btnText = btn.querySelector('.btn-text');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            errBox.style.display = 'none';
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value;
-
-            if (!email || !pass) {
-                errBox.textContent = 'Please fill in both your email and password.';
-                errBox.style.display = 'block';
-                return;
-            }
-            btn.classList.add('loading');
-            btn.disabled = true;
-            btnText.textContent = 'Signing in...';
-
-            setTimeout(() => {
-                btn.classList.remove('loading');
-                btn.disabled = false;
-                btnText.textContent = 'Sign In securely';
-                errBox.textContent = 'This is a design preview — connect a login API to enable sign-in.';
-                errBox.style.background = 'rgba(46,139,87,.1)';
-                errBox.style.borderColor = 'var(--safe)';
-                errBox.style.color = 'var(--safe)';
-                errBox.style.display = 'block';
-            }, 1100);
-        });
-
-    </script>
+    <script src="js/env-config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 
 </html>
