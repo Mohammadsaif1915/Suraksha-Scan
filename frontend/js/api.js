@@ -1,7 +1,7 @@
 // API_BASE_URL is set dynamically:
 // - In production: set via env-config.js (injected by Vercel build)
 // - In local dev: falls back to relative Tomcat context path
-const API_BASE_URL = (window.__ENV__ && window.__ENV__.API_BASE_URL) || '/surakshascan-backend';
+const API_BASE_URL = (window.__ENV__ && window.__ENV__.API_BASE_URL) || 'https://suraksha-scan.onrender.com';
 
 async function authenticatedFetch(url, options = {}) {
     options.credentials = 'include';
