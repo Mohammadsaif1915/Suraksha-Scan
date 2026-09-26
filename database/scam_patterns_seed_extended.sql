@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- SurakshaScan Extended Real-World Scam Pattern Dataset v2
 -- Sources: RBI Alerts, CERT-In, NPCI, I4C (Cybercrime.gov.in),
 --          PIB Fact Check, TRAI TCCCPR 2024, SEBI Investor Alerts
@@ -98,7 +98,11 @@ INSERT INTO scam_patterns (category, pattern_text, pattern_type, risk_weight, de
 ('upi', '(?i)(rbi|npci|sebi|irdai|pfrda|uidai|trai)[@.]', 'regex', 85, 'Regulatory body impersonation. RBI/NPCI/SEBI have no mechanism to collect money from individuals via UPI.', true),
 ('upi', '(?i)(bank|sbi|hdfc|icici|axis|kotak|pnb|canara|union|bob|yes)[a-z0-9.\\-]*@', 'regex', 50, 'Bank name in VPA. Verify: hdfc.support@ybl is fraudulent. Official HDFCBank UPI is via HDFC Bank app only.', true),
 ('upi', '(?i)(help|support|care|customer|service|helpdesk|assist|official)', 'regex', 30, 'Generic support keywords in UPI handle. Fraudsters create VPAs mimicking official bank identifiers.', true),
-('upi', '(?i)(pay|payment|collect|request|amount)', 'regex', 20, 'Payment-related terms in VPA - often used to create deceptive collect requests.', true);
+('upi', '(?i)(pay|payment|collect|request|amount)', 'regex', 20, 'Payment-related terms in VPA - often used to create deceptive collect requests.', true),
+('upi', '(?i)(fraud|scam|cheat|hack|steal|fake|phish|malicious|suspicious|criminal)', 'regex', 99, 'CRITICAL: UPI handle explicitly contains scam-indicator word (fraud/scam/cheat/fake/phish). No legitimate VPA uses these terms.', true),
+('upi', '(?i)(block|suspend|deactivate|expire|restrict|disable|freeze)', 'regex', 60, 'Account threat keywords in UPI handle - used to create urgency panic in victims.', true),
+('upi', '(?i)(otp|pin|password|credentials|login|secret|cvv)', 'regex', 95, 'CRITICAL: UPI ID contains sensitive credential keywords. No legitimate payment handle ever asks for OTP/PIN.', true),
+('upi', '(?i)(free|loan|credit|approved|sanctioned|disburse|instant)', 'regex', 55, 'Financial lure keywords in UPI handle - used in fake loan approval scams.', true);
 
 -- ============================================================
 -- CATEGORY: Link / URL Scams
