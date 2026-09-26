@@ -24,8 +24,12 @@ public class ScanService {
         if (content.length() > RiskThresholds.MAX_INPUT_LENGTH) {
             throw new IllegalArgumentException("Content exceeds maximum allowed length.");
         }
-        if (!inputType.equals("sms") && !inputType.equals("upi") && !inputType.equals("link")) {
+        if (!inputType.equals("sms") && !inputType.equals("upi") && !inputType.equals("link") && !inputType.equals("image")) {
             throw new IllegalArgumentException("Unsupported input type.");
+        }
+        // 'image' is OCR-extracted text — treat as SMS for rule-engine matching
+        if (inputType.equals("image")) {
+            inputType = "sms";
         }
 
         JsonObject evaluationResult = ruleEngine.evaluate(inputType, content);

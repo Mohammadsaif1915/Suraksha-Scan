@@ -1,365 +1,690 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="SurakshaScan Administration Dashboard">
     <title>SurakshaScan — Admin Dashboard</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
-    <link rel="stylesheet" href="css/style.css">
-        <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body { display: none; background: #09090b; color: #f8fafc; font-family: 'Outfit', sans-serif; }
-        .layout { display: flex; min-height: 100vh; background: #09090b; }
-        .sidebar { width: 240px; background: #18181b; color: #f8fafc; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.08); }
-        .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .sidebar-brand h2 { margin: 0; font-size: 20px; font-weight: 800; color: #facc15; }
-        .sidebar-brand small { color: #52525b; font-size: 12px; margin-top: 4px; display: block; }
-        .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 11px 16px; color: #a1a1aa; text-decoration: none; font-size: 14px; font-weight: 500; border-left: 3px solid transparent; transition: all 0.2s; }
-        .sidebar nav a:hover, .sidebar nav a.active { background: rgba(37,99,235,0.1); color: #f8fafc; border-left-color: #facc15; }
-        .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
-        .sidebar-footer a { color: #71717a; font-size: 13px; text-decoration: none; }
-        .sidebar-footer a:hover { color: #facc15; }
-        .content { flex: 1; overflow-x: hidden; display: flex; flex-direction: column; }
-        .topbar { background: #18181b; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
-        .topbar h1 { margin: 0; font-size: 20px; font-weight: 700; color: #f8fafc; }
-        .topbar-user { font-size: 14px; color: #71717a; }
-        .topbar-user strong { color: #f8fafc; }
-        .topbar-user a { color: #ef4444; text-decoration: none; font-weight: 700; }
-        .main { padding: 24px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: #18181b; padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: 0.3s; }
-        .stat-card:hover { border-color: rgba(250,204,21,0.3); transform: translateY(-3px); }
-        .stat-card h4 { margin: 0 0 8px 0; font-size: 12px; color: #71717a; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-        .stat-card .num { font-size: 32px; font-weight: 800; color: #facc15; }
-        .section { background: #18181b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px; overflow: hidden; }
-        .section-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
-        .section-header h3 { margin: 0; font-size: 16px; color: #f8fafc; font-weight: 600; }
-        .section-body { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 12px 16px; background: rgba(255,255,255,0.02); color: #52525b; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        td { padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #d4d4d8; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge-safe { background: rgba(16,185,129,0.15); color: #10b981; }
-        .badge-suspicious { background: rgba(245,158,11,0.15); color: #f59e0b; }
-        .badge-risk { background: rgba(239,68,68,0.15); color: #ef4444; }
-        .badge-active { background: rgba(16,185,129,0.15); color: #10b981; }
-        .badge-removed { background: rgba(148,163,184,0.15); color: #94a3b8; }
-        .badge-on { background: rgba(37,99,235,0.15); color: #60a5fa; }
-        .badge-off { background: rgba(148,163,184,0.15); color: #71717a; }
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; transition: 0.2s; }
-        .btn-sm { padding: 5px 12px; font-size: 12px; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-danger { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-        .btn-danger:hover { background: #ef4444; color: #fff; }
-        .btn-success { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-        .btn-success:hover { background: #10b981; color: #fff; }
-        .btn-warning { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
-        .btn-secondary { background: rgba(255,255,255,0.06); color: #a1a1aa; border: 1px solid rgba(255,255,255,0.1); }
-        .filters { padding: 14px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .filters input, .filters select { padding: 8px 12px; background: #09090b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 13px; font-family: inherit; }
-        .filters input { min-width: 200px; }
-        .pagination { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #71717a; border-top: 1px solid rgba(255,255,255,0.06); }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-overlay.open { display: flex; }
-        .modal { background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .modal-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { margin: 0; font-size: 18px; color: #f8fafc; }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: flex-end; gap: 10px; }
-        .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #52525b; line-height: 1; transition: 0.2s; }
-        .close-btn:hover { color: #f8fafc; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; background: #09090b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 14px; font-family: inherit; transition: 0.2s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; }
-        .msg-ok { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-        .msg-err { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-        .menu-toggle { display: none; background: none; color: #f8fafc; border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; font-size: 18px; cursor: pointer; border-radius: 6px; }
-        .view { display: none; } .view.active { display: block; }
-        .empty { padding: 40px; text-align: center; color: #52525b; font-size: 14px; }
-        @media (max-width: 768px) { .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 200; transition: left 0.25s; } .sidebar.open { left: 0; } .menu-toggle { display: block; } .main { padding: 16px; } .stats-grid { grid-template-columns: 1fr 1fr; } }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0C2340;
+            --navy-2: #123258;
+            --marigold: #F2A73B;
+            --marigold-dark: #D98C1F;
+            --paper: #F1ECDD;
+            --surface: #FAF6EC;
+            --ink: #16202E;
+            --ink-soft: #5A6B7D;
+            --line: #DFD6BE;
+            --safe: #2E8B57;
+            --danger: #D64545;
+            --warning: #F59E0B;
+            --radius-s: 10px;
+            --radius-m: 18px;
+            --radius-l: 28px;
+            --shadow: 0 18px 40px -20px rgba(12, 35, 64, 0.25);
+            --sidebar-width: 260px;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #0B1622;
+                --surface: #101E2E;
+                --ink: #EDF1F5;
+                --ink-soft: #9FB0C0;
+                --line: #22314480;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--marigold);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Admin Sidebar - Distinctly Navy */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--navy);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar-brand {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand a {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .sidebar-brand a em {
+            font-style: normal;
+            color: var(--marigold);
+        }
+
+        .sidebar-brand small {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            padding: 20px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: var(--radius-s);
+            margin-bottom: 4px;
+            transition: .2s;
+        }
+
+        .sidebar-nav a .icon {
+            font-size: 18px;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--marigold);
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--navy);
+        }
+
+        .user-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .user-info .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info .role {
+            font-size: 12px;
+            color: var(--marigold);
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px;
+            border-radius: 6px;
+            transition: .2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(214, 69, 69, 0.2);
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .topbar h1 {
+                color: var(--ink);
+            }
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+            border: 1px solid var(--line);
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: .2s;
+            cursor: pointer;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btn-outline {
+                color: var(--ink);
+            }
+        }
+
+        .btn-outline:hover {
+            border-color: var(--navy);
+            background: var(--surface);
+        }
+
+        .content-area {
+            padding: 32px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Stats Grid */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 24px;
+            transition: .2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--navy);
+        }
+
+        .stat-box.primary::after { background: var(--marigold); }
+        .stat-box.success::after { background: var(--safe); }
+        .stat-box.warning::after { background: var(--warning); }
+        .stat-box.danger::after { background: var(--danger); }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-box .label {
+            font-size: 13px;
+            color: var(--ink-soft);
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-box .number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--ink);
+            font-family: 'Poppins', sans-serif;
+            line-height: 1;
+        }
+
+        /* Two columns section */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--navy);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .section-header h3 {
+                color: var(--ink);
+            }
+        }
+
+        .section-header .actions a {
+            color: var(--navy);
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--paper);
+            padding: 6px 12px;
+            border-radius: var(--radius-s);
+            border: 1px solid var(--line);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .section-header .actions a {
+                color: var(--ink);
+            }
+        }
+
+        .section-header .actions a:hover {
+            border-color: var(--navy);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 14px 24px;
+            text-align: left;
+            font-size: 12px;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--line);
+            background: rgba(0,0,0,0.02);
+        }
+
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            color: var(--ink);
+            border-bottom: 1px solid var(--line);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(12, 35, 64, 0.02);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            tr:hover td {
+                background: rgba(255, 255, 255, 0.02);
+            }
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge.active { background: rgba(46, 139, 87, 0.15); color: var(--safe); }
+        .badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge.suspended { background: rgba(214, 69, 69, 0.15); color: var(--danger); }
+
+        /* Activity Feed */
+        .activity-feed {
+            padding: 10px 24px 24px;
+        }
+
+        .feed-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .feed-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            border: 1px solid var(--line);
+        }
+
+        .feed-content p {
+            margin: 0 0 4px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .feed-content p strong {
+            color: var(--navy);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .feed-content p strong {
+                color: var(--ink);
+            }
+        }
+
+        .feed-time {
+            font-size: 12px;
+            color: var(--ink-soft);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .topbar { padding: 16px 24px; }
+            .content-area { padding: 24px; }
+        }
     </style>
 </head>
-<body id="pageBody">
-<div class="layout fade-in">
-    <aside class="sidebar" id="sidebar">
+
+<body>
+    <!-- Admin Sidebar -->
+    <aside class="sidebar">
         <div class="sidebar-brand">
-            <h2>SurakshaScan</h2>
-            <small>Admin Panel</small>
+            <a href="index.html" style="display:flex; align-items:center; text-decoration:none;"><img src="img/logo.png" alt="Logo" style="height:1.2em; margin-right:8px; vertical-align:middle;">Suraksha<em>Scan</em></a>
+            <small>Admin Portal</small>
         </div>
-        <nav>
-            <a href="#" class="active" data-view="overview">📊 Overview</a>
-            <a href="#" data-view="analytics">📈 Threat Intel</a>
-            <a href="#" data-view="patterns">🛡 Scam Rules</a>
-            <a href="#" data-view="community">🚩 Community</a>
-            <a href="#" data-view="users">👥 Users</a>
-            <a href="#" data-view="scans">🔍 Scan Activity</a>
-            <a href="#" data-view="audit">📋 Audit Log</a>
-            <a href="#" data-view="security">🛡️ Security & System</a>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-label">Overview</div>
+            <a href="admin.html" class="active"><span class="icon">📈</span> Dashboard</a>
+            
+            <div class="nav-label" style="margin-top: 20px;">Management</div>
+            <a href="#"><span class="icon">👥</span> Users & Access</a>
+            <a href="#"><span class="icon">🚨</span> Scam Database</a>
+            <a href="#"><span class="icon">📰</span> Articles & News</a>
+            
+            <div class="nav-label" style="margin-top: 20px;">System</div>
+            <a href="#"><span class="icon">⚙️</span> Settings</a>
+            <a href="#"><span class="icon">📡</span> API Logs</a>
         </nav>
+
         <div class="sidebar-footer">
-            <a href="dashboard.html">← Back to App</a>
+            <div class="user-chip">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-info">
+                    <div class="name" id="sidebarUserName">System Admin</div>
+                    <div class="role" id="sidebarUserRole">Superuser</div>
+                </div>
+                <button id="logoutBtn" class="logout-btn" title="Logout" onclick="window.location.href='login.html'">
+                    <span class="icon">🚪</span>
+                </button>
+            </div>
         </div>
     </aside>
 
-    <div class="content">
-        <div class="topbar">
-            <div style="display:flex;align-items:center;gap:12px;">
-                <button class="menu-toggle" id="menuToggle">☰</button>
-                <h1 id="viewTitle">Overview</h1>
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1>Admin Overview</h1>
+            <div class="topbar-right">
+                <button class="btn-outline">
+                    <span class="icon">⬇️</span> Export Report
+                </button>
             </div>
-            <div class="topbar-user">
-                <select id="analyticsDateRange" style="display:none; margin-right:15px; padding:4px 8px;">
-                    <option value="today">Today</option>
-                    <option value="7d">Last 7 Days</option>
-                    <option value="30d" selected>Last 30 Days</option>
-                    <option value="90d">Last 90 Days</option>
-                    <option value="all">All Time</option>
-                </select>
-                Admin: <strong id="adminName"></strong> | <a href="#" id="logoutLink" style="color:var(--danger);text-decoration:none;font-weight:bold;">Logout</a>
-            </div>
-        </div>
+        </header>
 
-        <div class="main">
-
-            <!-- Overview -->
-            <div class="view active" id="view-overview">
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-card"><h4>Total Users</h4><div class="num" id="s-users">–</div></div>
-                    <div class="stat-card"><h4>Total Scans</h4><div class="num" id="s-scans">–</div></div>
-                    <div class="stat-card" style="border-left-color:var(--danger);"><h4>High Risk Scans</h4><div class="num" id="s-highrisk">–</div></div>
-                    <div class="stat-card" style="border-left-color:var(--warning);"><h4>Community Flags</h4><div class="num" id="s-flags">–</div></div>
-                    <div class="stat-card" style="border-left-color:#6c757d;"><h4>Pending Links</h4><div class="num" id="s-links">–</div></div>
+        <div class="content-area">
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-box primary">
+                    <div class="label"><span class="icon">👥</span> Total Users</div>
+                    <div class="number">12,450</div>
                 </div>
-                <div class="section">
-                    <div class="section-header"><h3>Recent Scan Activity</h3></div>
-                    <div class="section-body"><div id="overviewRecentScans"><div class="empty">Loading…</div></div></div>
+                <div class="stat-box warning">
+                    <div class="label"><span class="icon">🔍</span> Scans Today</div>
+                    <div class="number">3,892</div>
+                </div>
+                <div class="stat-box danger">
+                    <div class="label"><span class="icon">🚨</span> Threats Blocked</div>
+                    <div class="number">845</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="label"><span class="icon">💻</span> System Uptime</div>
+                    <div class="number">99.9%</div>
                 </div>
             </div>
 
-            <!-- Analytics & Threat Intel -->
-            <div class="view" id="view-analytics">
-                <div class="stats-grid" id="analyticsKpiGrid">
-                    <!-- Dynamic KPIs -->
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 2fr 1fr;">
-                    <div class="section">
-                        <div class="section-header"><h3>Scan Volume Trend</h3></div>
-                        <div class="section-body" style="padding:15px;"><canvas id="chartScanTrend"></canvas></div>
-                    </div>
-                    <div class="section">
-                        <div class="section-header"><h3>Verdict Distribution</h3></div>
-                        <div class="section-body" style="padding:15px;"><canvas id="chartVerdict"></canvas></div>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 1fr 2fr;">
-                    <div class="section">
-                        <div class="section-header"><h3>Scan Types</h3></div>
-                        <div class="section-body" style="padding:15px;"><canvas id="chartTypes"></canvas></div>
-                    </div>
-                    <div class="section">
-                        <div class="section-header"><h3>High-Risk Detections Trend</h3></div>
-                        <div class="section-body" style="padding:15px;"><canvas id="chartHighRisk"></canvas></div>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div class="section">
-                        <div class="section-header"><h3>Configured Scam Categories</h3></div>
-                        <div class="section-body"><div id="tableScamCategories"><div class="empty">Loading…</div></div></div>
-                    </div>
-                    <div class="section">
-                        <div class="section-header"><h3>Rule Configuration</h3></div>
-                        <div class="section-body"><div id="tableTopRules"><div class="empty">Loading…</div></div></div>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 2fr 1fr;">
-                    <div class="section">
-                        <div class="section-header"><h3>Top Community Flags</h3></div>
-                        <div class="section-body"><div id="tableTopFlags"><div class="empty">Loading…</div></div></div>
-                    </div>
-                    <div class="section">
-                        <div class="section-header"><h3>Community Reports Trend</h3></div>
-                        <div class="section-body" style="padding:15px;"><canvas id="chartCommunity"></canvas></div>
-                    </div>
-                </div>
-                
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div class="section">
-                        <div class="section-header"><h3>Security Activity</h3></div>
-                        <div class="section-body"><div id="tableSecurityActivity"><div class="empty">Loading…</div></div></div>
-                    </div>
-                    <div class="section">
-                        <div class="section-header"><h3>Admin Activity Summary</h3></div>
-                        <div class="section-body"><div id="tableAdminSummary"><div class="empty">Loading…</div></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Scam Rules -->
-            <div class="view" id="view-patterns">
-                <div class="section">
+            <!-- Grid -->
+            <div class="dashboard-grid">
+                <!-- Recent Users -->
+                <div class="section-card">
                     <div class="section-header">
-                        <h3>Scam Detection Rules</h3>
-                        <button class="btn btn-primary" id="btnCreatePattern">+ New Rule</button>
+                        <h3>Recent User Registrations</h3>
+                        <div class="actions">
+                            <a href="#">View All</a>
+                        </div>
                     </div>
-                    <div class="section-body"><div id="patternsTable"><div class="empty">Loading…</div></div></div>
-                </div>
-            </div>
-
-            <!-- Community -->
-            <div class="view" id="view-community">
-                <div class="section">
-                    <div class="section-header"><h3>Community Flags</h3></div>
-                    <div class="filters">
-                        <button class="btn btn-sm btn-primary" id="loadCommunityBtn">Refresh</button>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>rahul.sharma@example.com</strong></td>
+                                    <td>User</td>
+                                    <td>2 mins ago</td>
+                                    <td><span class="badge active">Active</span></td>
+                                    <td><a href="#" style="color:var(--navy);font-weight:600;">Manage</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>priya.k@example.com</strong></td>
+                                    <td>User</td>
+                                    <td>1 hour ago</td>
+                                    <td><span class="badge active">Active</span></td>
+                                    <td><a href="#" style="color:var(--navy);font-weight:600;">Manage</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>suspicious_bot99@tempmail.com</strong></td>
+                                    <td>User</td>
+                                    <td>3 hours ago</td>
+                                    <td><span class="badge suspended">Suspended</span></td>
+                                    <td><a href="#" style="color:var(--navy);font-weight:600;">Manage</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>amit.admin@surakshascan.in</strong></td>
+                                    <td>Moderator</td>
+                                    <td>Yesterday</td>
+                                    <td><span class="badge active">Active</span></td>
+                                    <td><a href="#" style="color:var(--navy);font-weight:600;">Manage</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="section-body"><div id="communityTable"><div class="empty">Loading…</div></div></div>
-                    <div class="pagination" id="communityPager"></div>
                 </div>
-            </div>
 
-            <!-- Users -->
-            <div class="view" id="view-users">
-                <div class="section">
-                    <div class="section-header"><h3>User Management</h3></div>
-                    <div class="filters">
-                        <input type="text" id="userSearch" placeholder="Search name or email…">
-                        <select id="userRoleFilter">
-                            <option value="all">All Roles</option>
-                            <option value="normal">Normal</option>
-                            <option value="guardian">Guardian</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <button class="btn btn-sm btn-primary" id="searchUsersBtn">Search</button>
-                    </div>
-                    <div class="section-body"><div id="usersTable"><div class="empty">Loading…</div></div></div>
-                    <div class="pagination" id="usersPager"></div>
-                </div>
-            </div>
-
-            <!-- Scans -->
-            <div class="view" id="view-scans">
-                <div class="section">
-                    <div class="section-header"><h3>Scan Activity</h3></div>
-                    <div class="filters">
-                        <select id="scanVerdictFilter">
-                            <option value="all">All Verdicts</option>
-                            <option value="SAFE">Safe</option>
-                            <option value="SUSPICIOUS">Suspicious</option>
-                            <option value="HIGH RISK">High Risk</option>
-                        </select>
-                        <select id="scanTypeFilter">
-                            <option value="all">All Types</option>
-                            <option value="sms">SMS</option>
-                            <option value="upi">UPI</option>
-                            <option value="link">Link</option>
-                        </select>
-                        <button class="btn btn-sm btn-primary" id="filterScansBtn">Filter</button>
-                    </div>
-                    <div class="section-body"><div id="scansTable"><div class="empty">Loading…</div></div></div>
-                    <div class="pagination" id="scansPager"></div>
-                </div>
-            </div>
-
-            <!-- Audit Log -->
-            <div class="view" id="view-audit">
-                <div class="section">
-                    <div class="section-header"><h3>Admin Audit Log</h3></div>
-                    <div class="section-body"><div id="auditTable"><div class="empty">Loading…</div></div></div>
-                    <div class="pagination" id="auditPager"></div>
-                </div>
-            </div>
-
-            <!-- Security & System -->
-            <div class="view" id="view-security">
-                <div class="stats-grid">
-                    <div class="stat-card"><h4>Application Health</h4><div class="num" id="s-health-app" style="font-size:20px; color:#155724;">Loading...</div></div>
-                    <div class="stat-card"><h4>Database Health</h4><div class="num" id="s-health-db" style="font-size:20px;">Loading...</div></div>
-                    <div class="stat-card"><h4>System Security</h4><div class="num" id="s-health-sec" style="font-size:20px; color:#155724;">Protected</div></div>
-                </div>
-                <div class="section">
+                <!-- System Activity -->
+                <div class="section-card">
                     <div class="section-header">
-                        <h3>Recent Security Events</h3>
-                        <button class="btn btn-sm btn-primary" id="refreshSecurityBtn">Refresh</button>
+                        <h3>System Logs</h3>
                     </div>
-                    <div class="section-body"><div id="securityEventsTable"><div class="empty">Loading…</div></div></div>
+                    <div class="activity-feed">
+                        <div class="feed-item">
+                            <div class="feed-icon">🚨</div>
+                            <div class="feed-content">
+                                <p>New phishing campaign detected: <strong>"Bank KYC Update"</strong>.</p>
+                                <span class="feed-time">10 mins ago</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon">👤</div>
+                            <div class="feed-content">
+                                <p><strong>System Admin</strong> updated scam database rules.</p>
+                                <span class="feed-time">1 hour ago</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon">⚙️</div>
+                            <div class="feed-content">
+                                <p>Automated backup completed successfully.</p>
+                                <span class="feed-time">Last night at 3:00 AM</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon">⚠️</div>
+                            <div class="feed-content">
+                                <p>High API latency detected in scan service.</p>
+                                <span class="feed-time">Yesterday</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-        </div><!-- /main -->
-    </div><!-- /content -->
-</div><!-- /layout -->
-
-<!-- Pattern Modal -->
-<div class="modal-overlay" id="patternModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 id="patternModalTitle">New Rule</h3>
-            <button class="close-btn" onclick="closeModal('patternModal')">×</button>
         </div>
-        <div class="modal-body"><input type="hidden" id="editPatternId">
-            <div class="form-group"><label>Category</label>
-                <select id="fCategory"><option value="sms">SMS</option><option value="upi">UPI</option><option value="link">Link</option><option value="call">Call</option></select>
-            </div>
-            <div class="form-group"><label>Pattern Type</label>
-                <select id="fType"><option value="keyword">Keyword</option><option value="regex">Regex</option></select>
-            </div>
-            <div class="form-group"><label>Pattern Text</label><input type="text" id="fText" maxlength="500" placeholder="e.g. urgent kyc or (?i)kyc.*block"></div>
-            <div class="form-group"><label>Risk Weight (1–100)</label><input type="number" id="fWeight" min="1" max="100" value="20"></div>
-            <div class="form-group"><label>Description</label><textarea id="fDesc" maxlength="1000" placeholder="Describe what this pattern detects"></textarea></div>
-            <div id="patternMsg"></div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('patternModal')">Cancel</button>
-            <button class="btn btn-primary" id="savePatternBtn">Save Rule</button>
-        </div>
-    </div>
-</div>
-
-<!-- Scan Detail Modal -->
-<div class="modal-overlay" id="scanDetailModal">
-    <div class="modal" style="width:560px;">
-        <div class="modal-header">
-            <h3>Scan Detail</h3>
-            <button class="close-btn" onclick="closeModal('scanDetailModal')">×</button>
-        </div>
-        <div class="modal-body" id="scanDetailBody">Loading…</div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/api.js"></script>
-<script src="js/admin.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        checkAuthAndInit((user) => {
-            if (user.role !== 'admin') {
-                document.body.style.display = 'block';
-                document.body.innerHTML = '<div style="padding:60px;text-align:center;font-family:Arial;"><h2 style="color:var(--danger);">Access Denied</h2><p>You do not have admin privileges.</p><a href="dashboard.html">Return to App</a></div>';
-                return;
-            }
-            document.getElementById('pageBody').style.display = 'block';
-            document.getElementById('adminName').textContent = user.name;
-            initAdmin();
-        });
-        document.getElementById('logoutLink').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await authenticatedFetch('/api/auth/logout', { method: 'POST' });
-            window.location.href = 'login.html';
-        });
-    });
-</script>
+    </main>
 </body>
+
 </html>
-
-

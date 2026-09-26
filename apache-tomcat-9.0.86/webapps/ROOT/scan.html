@@ -1,146 +1,943 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Scan suspicious SMS, UPI IDs and links with SurakshaScan">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Scan suspicious SMS, UPI IDs, links, and screenshots with SurakshaScan AI">
     <title>SurakshaScan — Scam Scanner</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Tesseract.js v4 for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
     <style>
-        body { display: none; } /* global style handles body */
-        header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;}
-        header h2 { margin: 0; color: var(--accent); }
-        main { padding: 30px 20px; max-width: 900px; margin: 0 auto; }
-        
-        .tabs { display: flex; margin-bottom: 24px; gap: 10px; }
-        .tab { flex: 1; padding: 12px 20px; cursor: pointer; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); outline: none; border-radius: 8px; font-size: 15px; font-weight: 600; transition: 0.2s;}
-        .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .tab:hover:not(.active) { background: var(--surface-light); color: var(--text); }
-        
-        .scan-form { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--border); padding: 30px; border-radius: 12px; box-shadow: var(--shadow-sm); }
-        .scan-form h3 { margin-top: 0; color: var(--text); font-size: 20px;}
-        
-        textarea, input[type="text"] { width: 100%; padding: 16px; margin-top: 15px; background: var(--background); border: 1px solid var(--border); color: var(--text); border-radius: 8px; box-sizing: border-box; font-size: 15px; font-family: inherit;}
-        textarea { resize: vertical; min-height: 140px; }
-        
+        :root {
+            --navy: #0C2340;
+            --navy-2: #123258;
+            --marigold: #F2A73B;
+            --marigold-dark: #D98C1F;
+            --paper: #F1ECDD;
+            --surface: #FAF6EC;
+            --ink: #16202E;
+            --ink-soft: #5A6B7D;
+            --line: #DFD6BE;
+            --safe: #2E8B57;
+            --safe-bg: rgba(46,139,87,0.1);
+            --danger: #D64545;
+            --danger-bg: rgba(214,69,69,0.1);
+            --warning: #D97706;
+            --warning-bg: rgba(217,119,6,0.1);
+            --radius-s: 10px;
+            --radius-m: 18px;
+            --radius-l: 28px;
+            --shadow: 0 18px 40px -20px rgba(12, 35, 64, 0.25);
+            --sidebar-width: 260px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #0B1622;
+                --surface: #101E2E;
+                --ink: #EDF1F5;
+                --ink-soft: #9FB0C0;
+                --line: #22314480;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
+        a { color: inherit; text-decoration: none; }
+
+        /* Sidebar — identical to dashboard.html */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-brand { padding: 28px 24px 20px; border-bottom: 1px solid var(--line); }
+        .sidebar-brand a { font-size: 22px; font-weight: 800; color: var(--navy); }
+        @media (prefers-color-scheme:dark) { .sidebar-brand a { color: var(--ink); } }
+        .sidebar-brand a em { font-style: normal; color: var(--marigold-dark); }
+        .sidebar-brand small { display: block; color: var(--ink-soft); font-size: 13px; margin-top: 4px; }
+        .sidebar-nav { padding: 20px 12px; flex: 1; overflow-y: auto; }
+        .nav-label { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; font-weight: 700; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--ink-soft); font-size: 15px; font-weight: 500; border-radius: var(--radius-s); margin-bottom: 4px; transition: .2s; }
+        .sidebar-nav a .icon { font-size: 18px; }
+        .sidebar-nav a:hover { background: rgba(12,35,64,0.05); color: var(--ink); }
+        .sidebar-nav a.active { background: var(--navy); color: #fff; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--line); }
+        .user-chip { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--marigold); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--navy); }
+        .user-info { flex: 1; overflow: hidden; }
+        .user-info .name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-info .role { font-size: 12px; color: var(--ink-soft); }
+        .logout-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; padding: 6px; border-radius: 6px; transition: .2s; }
+        .logout-btn:hover { background: var(--danger-bg); }
+
+        /* Main */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--line); padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .topbar h1 { font-size: 24px; font-weight: 700; color: var(--navy); }
+        @media (prefers-color-scheme:dark) { .topbar h1 { color: var(--ink); } }
+
+        .content-area { padding: 32px; overflow-y: auto; max-width: 900px; width: 100%; }
+
+        /* Scan Type Tabs */
+        .tab-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            padding: 6px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--ink-soft);
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn.active {
+            background: var(--navy);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(12,35,64,0.3);
+        }
+        .tab-btn:hover:not(.active) { color: var(--ink); background: var(--paper); }
+
+        /* Scan Form Card */
+        .scan-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            margin-bottom: 28px;
+        }
+        .scan-card h3 { font-size: 20px; margin-bottom: 6px; color: var(--navy); }
+        @media (prefers-color-scheme:dark) { .scan-card h3 { color: var(--ink); } }
+        .scan-card .hint { font-size: 14px; color: var(--ink-soft); margin-bottom: 20px; }
+
+        /* Text Input */
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 1.5px solid var(--line);
+            border-radius: var(--radius-m);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 15px;
+            transition: border-color .2s, box-shadow .2s;
+            resize: vertical;
+            min-height: 140px;
+        }
+        input.input-field { min-height: unset; resize: none; }
+        .input-field:focus {
+            border-color: var(--navy);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(12,35,64,0.08);
+        }
+
+        /* OCR Section */
         .ocr-section {
             margin-top: 20px;
-            padding: 20px;
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px dashed var(--primary);
-            border-radius: 8px;
+            border: 2px dashed var(--line);
+            border-radius: var(--radius-m);
+            padding: 32px 24px;
             text-align: center;
+            transition: .25s;
+            cursor: pointer;
+            position: relative;
         }
-        .ocr-section p { margin-top: 0; color: var(--text-muted); font-size: 14px; }
-        
-        button.scan-btn { margin-top: 20px; width: 100%; padding: 14px; background: var(--primary); color: #ffffff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button.scan-btn:hover:not(:disabled) { background: var(--primary-mid); box-shadow: 0 4px 15px rgba(37,99,235,0.4); transform: translateY(-2px); }
-        button.scan-btn:disabled { background: var(--surface-light); color: var(--text-muted); cursor: not-allowed; }
-        
-        .result-card { margin-top: 30px; background: var(--surface); padding: 30px; border-radius: 12px; box-shadow: var(--shadow-md); display: none; }
-        .safe { border-left: 6px solid var(--success); }
-        .suspicious { border-left: 6px solid var(--warning); }
-        .high-risk { border-left: 6px solid var(--danger); }
-        .result-header { font-size: 26px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-        .safe .result-header { color: var(--success); }
-        .suspicious .result-header { color: var(--warning); }
-        .high-risk .result-header { color: var(--danger); }
-        .error-msg { color: #fca5a5; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px; border-radius: 8px; margin-bottom: 20px; display: none;}
-        
-        .rule-item { background: rgba(255,255,255,0.03); padding: 12px 16px; border-left: 4px solid var(--primary); margin-top: 12px; font-size: 14px; border-radius: 0 8px 8px 0;}
-        .disclaimer { font-size: 13px; color: var(--text-muted); margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
-        
-        #ocrProgress { margin-top: 10px; font-size: 13px; color: var(--accent); font-weight: 600; display: none; }
+        .ocr-section.dragover {
+            border-color: var(--marigold);
+            background: rgba(242,167,59,0.06);
+        }
+        .ocr-section.has-image {
+            border-color: var(--safe);
+            background: var(--safe-bg);
+        }
+        .ocr-section .ocr-icon { font-size: 40px; margin-bottom: 12px; }
+        .ocr-section .ocr-label { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+        .ocr-section .ocr-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+        .ocr-section input[type="file"] { display: none; }
+        .ocr-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--navy);
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: .18s;
+        }
+        .ocr-upload-btn:hover { background: var(--navy-2); transform: translateY(-1px); }
+
+        /* Image Preview */
+        .image-preview-wrap {
+            display: none;
+            position: relative;
+            margin-top: 16px;
+        }
+        .image-preview-wrap.visible { display: block; }
+        .image-preview-wrap img {
+            max-height: 240px;
+            max-width: 100%;
+            border-radius: var(--radius-s);
+            border: 1px solid var(--line);
+            display: block;
+            margin: 0 auto;
+        }
+        .image-clear-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* OCR Progress */
+        .ocr-progress {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--paper);
+            border-radius: var(--radius-s);
+            border: 1px solid var(--line);
+        }
+        .ocr-progress-bar-track {
+            width: 100%;
+            height: 6px;
+            background: var(--line);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .ocr-progress-bar-fill {
+            height: 100%;
+            background: var(--marigold);
+            border-radius: 3px;
+            transition: width .3s ease;
+            width: 0%;
+        }
+        .ocr-progress-text {
+            font-size: 13px;
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        /* Language selector for OCR */
+        .lang-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .lang-row label { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+        .lang-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+        .lang-chip {
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink-soft);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .18s;
+            font-family: inherit;
+        }
+        .lang-chip.selected {
+            border-color: var(--navy);
+            background: var(--navy);
+            color: #fff;
+        }
+
+        /* Extracted Text Preview */
+        .extracted-text-box {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--paper);
+            border-radius: var(--radius-s);
+            border: 1px solid var(--line);
+            max-height: 160px;
+            overflow-y: auto;
+        }
+        .extracted-text-box .et-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .extracted-text-box pre {
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            color: var(--ink);
+            line-height: 1.5;
+        }
+
+        /* Scan Button */
+        .scan-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--navy);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: background .2s, transform .18s, box-shadow .2s;
+        }
+        .scan-btn:hover:not(:disabled) {
+            background: var(--navy-2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px -10px rgba(12,35,64,.5);
+        }
+        .scan-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+        .scan-spinner {
+            width: 18px; height: 18px; border-radius: 50%;
+            border: 2.5px solid rgba(255,255,255,.3);
+            border-top-color: #fff;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+        .scan-btn.loading .scan-spinner { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Error Message */
+        .error-msg {
+            display: none;
+            padding: 14px 18px;
+            background: var(--danger-bg);
+            border: 1px solid var(--danger);
+            border-radius: var(--radius-s);
+            color: var(--danger);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Result Card */
+        .result-card {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .result-header {
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .result-header.safe { background: var(--safe-bg); border-bottom: 3px solid var(--safe); }
+        .result-header.suspicious { background: var(--warning-bg); border-bottom: 3px solid var(--warning); }
+        .result-header.danger { background: var(--danger-bg); border-bottom: 3px solid var(--danger); }
+        .result-icon { font-size: 48px; }
+        .result-verdict { font-size: 28px; font-weight: 800; font-family: 'Poppins', sans-serif; }
+        .result-header.safe .result-verdict { color: var(--safe); }
+        .result-header.suspicious .result-verdict { color: var(--warning); }
+        .result-header.danger .result-verdict { color: var(--danger); }
+        .result-score { font-size: 14px; color: var(--ink-soft); font-weight: 500; margin-top: 4px; }
+
+        .result-body { padding: 28px 32px; }
+        .result-summary { font-size: 16px; color: var(--ink); margin-bottom: 24px; line-height: 1.6; }
+
+        .rules-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+        }
+
+        .rule-item {
+            padding: 14px 18px;
+            border-left: 4px solid var(--navy);
+            border-radius: 0 var(--radius-s) var(--radius-s) 0;
+            background: var(--paper);
+            margin-bottom: 10px;
+        }
+        .rule-item .rule-desc { font-size: 14px; color: var(--ink); line-height: 1.5; margin-bottom: 6px; }
+        .rule-item .rule-meta { font-size: 12px; color: var(--ink-soft); display: flex; gap: 16px; flex-wrap: wrap; }
+        .rule-badge {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* OCR source indicator */
+        .ocr-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(242,167,59,0.15);
+            border: 1px solid var(--marigold);
+            color: var(--marigold-dark);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin-bottom: 16px;
+        }
+
+        /* Action row after results */
+        .result-actions {
+            padding: 0 32px 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1.5px solid var(--line);
+            background: transparent;
+            color: var(--ink);
+            cursor: pointer;
+            font-family: inherit;
+            transition: .18s;
+        }
+        .action-btn:hover { border-color: var(--navy); color: var(--navy); }
+        .action-btn.primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+        .action-btn.primary:hover { background: var(--navy-2); }
+
+        .disclaimer {
+            font-size: 13px;
+            color: var(--ink-soft);
+            padding: 16px 32px;
+            border-top: 1px solid var(--line);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .topbar { padding: 16px 24px; }
+            .content-area { padding: 24px; }
+            .scan-card { padding: 24px; }
+        }
     </style>
 </head>
-<body id="scanBody">
-    <header>
-        <h2>Suraksha<span>Scan</span></h2>
-        <a href="dashboard.html" style="color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 500;">&larr; Back to Dashboard</a>
-    </header>
-    <main class="fade-in">
-        <div class="tabs">
-            <button class="tab active" data-type="sms">SMS / Message</button>
-            <button class="tab" data-type="upi">UPI ID</button>
-            <button class="tab" data-type="link">URL / Link</button>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <a href="index.html" style="display:flex; align-items:center; text-decoration:none;"><img src="img/logo.png" alt="Logo" style="height:1.2em; margin-right:8px; vertical-align:middle;">Suraksha<em>Scan</em></a>
+            <small>Cyber Safety Platform</small>
         </div>
-        
-        <div class="scan-form">
-            <h3 id="inputTitle">Analyze Message Text</h3>
-            <div id="errorMsg" class="error-msg"></div>
-            
-            <textarea id="scanContentSms" placeholder="Paste suspicious SMS or WhatsApp text here..." maxlength="2000"></textarea>
-            <input type="text" id="scanContentUpi" placeholder="e.g. username@bank" style="display: none;" maxlength="255">
-            <input type="text" id="scanContentLink" placeholder="e.g. https://suspicious-site.com" style="display: none;" maxlength="1000">
-            
-            <div id="ocrWrapper" class="ocr-section">
-                <p>Or extract text from a screenshot</p>
-                <input type="file" id="imageUpload" accept="image/*" style="display:none">
-                <button class="btn btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="document.getElementById('imageUpload').click()">Upload Screenshot</button>
-                <div id="ocrProgress">Initializing OCR Engine...</div>
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a href="dashboard.html"><span class="icon">🏠</span> Dashboard</a>
+            <a href="scan.html" class="active"><span class="icon">🔍</span> Scam Scanner</a>
+            <a href="history.html"><span class="icon">📋</span> Scan History</a>
+            <div class="nav-label" style="margin-top:20px;">Community</div>
+            <a href="community.html"><span class="icon">👥</span> Community Reports</a>
+            <a href="awareness.html"><span class="icon">📚</span> Awareness Hub</a>
+            <a href="guardian.html"><span class="icon">👨‍👩‍👧</span> Family Safety</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-chip">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <div class="name" id="sidebarUserName">User</div>
+                    <div class="role" id="sidebarUserRole">Member</div>
+                </div>
+                <button class="logout-btn" title="Logout" onclick="window.location.href='login.html'">🚪</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1>🔍 Scam Scanner</h1>
+        </header>
+
+        <div class="content-area">
+            <!-- Scan Type Tabs -->
+            <div class="tab-group" role="tablist">
+                <button class="tab-btn active" data-type="sms" id="tab-sms" role="tab">💬 SMS / Message</button>
+                <button class="tab-btn" data-type="upi" id="tab-upi" role="tab">💳 UPI ID</button>
+                <button class="tab-btn" data-type="link" id="tab-link" role="tab">🔗 URL / Link</button>
+                <button class="tab-btn" data-type="image" id="tab-image" role="tab">📷 Image (OCR)</button>
             </div>
 
-            <button id="scanBtn" class="scan-btn">Analyze Now</button>
-        </div>
+            <!-- Scan Card -->
+            <div class="scan-card">
+                <div id="errorMsg" class="error-msg"></div>
 
-        <div id="resultCard" class="result-card fade-in">
-            <div id="resultVerdict" class="result-header"></div>
-            <div style="font-weight: 600; margin-bottom: 15px; font-size: 18px; color: var(--text-muted);">Risk Score: <span id="riskScore" style="color:var(--text); font-weight:800;"></span></div>
-            <p id="resultSummary" style="font-size: 16px; margin-bottom: 20px; color: var(--text);"></p>
-            <h4 style="margin-bottom: 10px; color: var(--accent); font-size: 15px; text-transform: uppercase; letter-spacing: 1px;">Threat Indicators Found:</h4>
-            <div id="rulesList"></div>
-            <div class="disclaimer">Detection is based on known scam indicators, real-world datasets, and community reports. A Safe result does not guarantee that an item is completely legitimate. Never share your OTP.</div>
+                <!-- SMS Panel -->
+                <div id="panel-sms">
+                    <h3>Analyze Suspicious Message</h3>
+                    <p class="hint">Paste the full text of any suspicious SMS, WhatsApp, or Telegram message below.</p>
+                    <textarea class="input-field" id="scanContentSms" placeholder="Paste suspicious message here...&#10;&#10;Example: Your SBI account has been blocked! Click here to update KYC immediately..." maxlength="3000"></textarea>
+                </div>
+
+                <!-- UPI Panel -->
+                <div id="panel-upi" style="display:none">
+                    <h3>Analyze UPI ID</h3>
+                    <p class="hint">Enter the UPI VPA (Virtual Payment Address) you want to verify.</p>
+                    <input type="text" class="input-field" id="scanContentUpi" placeholder="e.g. someone@oksbi or reward@paytm" maxlength="255">
+                </div>
+
+                <!-- Link Panel -->
+                <div id="panel-link" style="display:none">
+                    <h3>Analyze URL / Link</h3>
+                    <p class="hint">Enter or paste the full URL to check for phishing, malware, or fraud indicators.</p>
+                    <input type="text" class="input-field" id="scanContentLink" placeholder="e.g. https://sbi-kyc-update.xyz/login" maxlength="1000">
+                </div>
+
+                <!-- Image OCR Panel -->
+                <div id="panel-image" style="display:none">
+                    <h3>Scan Screenshot via OCR</h3>
+                    <p class="hint">Upload a screenshot of a suspicious message, email, notification, or website. AI will extract the text and analyze it for fraud indicators.</p>
+
+                    <!-- Drag & Drop Zone -->
+                    <div class="ocr-section" id="ocrDropZone">
+                        <div class="ocr-icon">📷</div>
+                        <div class="ocr-label">Drag & Drop your screenshot here</div>
+                        <div class="ocr-sub">Supports JPG, PNG, WebP, BMP, TIFF — Max 5 MB</div>
+                        <input type="file" id="imageUpload" accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff">
+                        <button class="ocr-upload-btn" type="button" onclick="document.getElementById('imageUpload').click()">
+                            📂 Choose Image
+                        </button>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="image-preview-wrap" id="imagePreviewWrap">
+                        <img id="imagePreview" src="" alt="Uploaded screenshot preview">
+                        <button class="image-clear-btn" id="imageClearBtn" title="Remove image">✕</button>
+                    </div>
+
+                    <!-- OCR Language Selection -->
+                    <div class="lang-row">
+                        <label>OCR Language:</label>
+                        <div class="lang-chips" id="langChips">
+                            <button class="lang-chip selected" data-lang="eng" type="button">🇬🇧 English</button>
+                            <button class="lang-chip" data-lang="hin" type="button">🇮🇳 हिंदी</button>
+                            <button class="lang-chip" data-lang="mar" type="button">🇮🇳 मराठी</button>
+                            <button class="lang-chip" data-lang="eng+hin" type="button">🌐 Eng+हिंदी</button>
+                        </div>
+                    </div>
+
+                    <!-- OCR Progress -->
+                    <div class="ocr-progress" id="ocrProgress">
+                        <div class="ocr-progress-bar-track">
+                            <div class="ocr-progress-bar-fill" id="ocrProgressBar"></div>
+                        </div>
+                        <div class="ocr-progress-text" id="ocrProgressText">Initializing OCR...</div>
+                    </div>
+
+                    <!-- Extracted Text Preview -->
+                    <div class="extracted-text-box" id="extractedTextBox">
+                        <div class="et-label">📝 Extracted Text</div>
+                        <pre id="extractedTextContent"></pre>
+                    </div>
+                </div>
+
+                <!-- Main Scan Button -->
+                <button class="scan-btn" id="scanBtn" type="button">
+                    <span class="scan-spinner" id="scanSpinner"></span>
+                    <span id="scanBtnText">🛡️ Analyze Now</span>
+                </button>
+            </div>
+
+            <!-- Result Card -->
+            <div class="result-card" id="resultCard">
+                <div class="result-header" id="resultHeader">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <div>
+                        <div class="result-verdict" id="resultVerdict"></div>
+                        <div class="result-score" id="resultScore"></div>
+                    </div>
+                </div>
+                <div class="result-body">
+                    <div id="ocrBadge" class="ocr-badge" style="display:none">📷 OCR Scan — Text extracted from image</div>
+                    <p class="result-summary" id="resultSummary"></p>
+                    <div class="rules-label" id="rulesLabel">Threat Indicators Found</div>
+                    <div id="rulesList"></div>
+                </div>
+                <div class="result-actions" id="resultActions"></div>
+                <div class="disclaimer">
+                    ⚠️ Detection is based on 200+ real-world scam patterns from RBI, CERT-In, I4C, NPCI, and community reports. A Safe result doesn't guarantee legitimacy. <strong>Never share your OTP with anyone.</strong>
+                    If you suspect a scam, report it at <a href="https://cybercrime.gov.in" target="_blank" style="color:var(--navy);font-weight:600;">cybercrime.gov.in</a> or call <strong>1930</strong>.
+                </div>
+            </div>
         </div>
     </main>
 
     <script src="js/api.js"></script>
-    <script src="js/scanner.js"></script>
     <script>
-        // OCR Logic Implementation
-        document.getElementById('imageUpload').addEventListener('change', function(e) {
-            if(e.target.files.length === 0) return;
-            const file = e.target.files[0];
-            
-            const progress = document.getElementById('ocrProgress');
-            const btn = document.querySelector('.scan-btn');
-            const textArea = document.getElementById('scanContentSms');
-            
-            progress.style.display = 'block';
-            progress.textContent = 'Analyzing Image...';
-            btn.disabled = true;
-            
-            Tesseract.recognize(
-              file,
-              'eng',
-              { logger: m => {
-                  if(m.status === 'recognizing text') {
-                      progress.textContent = 'Extracting text... ' + Math.round(m.progress * 100) + '%';
-                  }
-              }}
-            ).then(({ data: { text } }) => {
-                progress.textContent = 'Extraction Complete!';
-                textArea.value = text;
-                btn.disabled = false;
-                setTimeout(() => { progress.style.display = 'none'; }, 2000);
-            }).catch(err => {
-                console.error(err);
-                progress.textContent = 'OCR Failed.';
-                btn.disabled = false;
+    (function() {
+        // ──────────────────────────────────────────────
+        // State
+        // ──────────────────────────────────────────────
+        let currentType = 'sms';
+        let selectedOcrLang = 'eng';
+        let ocrExtractedText = '';
+        let isOcrRunning = false;
+
+        // DOM References
+        const tabs        = document.querySelectorAll('.tab-btn');
+        const panels      = { sms: 'panel-sms', upi: 'panel-upi', link: 'panel-link', image: 'panel-image' };
+        const scanBtn     = document.getElementById('scanBtn');
+        const scanBtnText = document.getElementById('scanBtnText');
+        const scanSpinner = document.getElementById('scanSpinner');
+        const errorMsg    = document.getElementById('errorMsg');
+        const resultCard  = document.getElementById('resultCard');
+        const imageUpload = document.getElementById('imageUpload');
+        const ocrDropZone = document.getElementById('ocrDropZone');
+
+        // ──────────────────────────────────────────────
+        // Tab Switching
+        // ──────────────────────────────────────────────
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentType = tab.getAttribute('data-type');
+                Object.values(panels).forEach(p => document.getElementById(p).style.display = 'none');
+                document.getElementById(panels[currentType] || 'panel-sms').style.display = 'block';
+                hideError();
+                resultCard.style.display = 'none';
             });
         });
 
-        // Toggle OCR section visibility based on tab
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                if(this.getAttribute('data-type') === 'sms') {
-                    document.getElementById('ocrWrapper').style.display = 'block';
-                } else {
-                    document.getElementById('ocrWrapper').style.display = 'none';
-                }
+        // ──────────────────────────────────────────────
+        // OCR Language Chips
+        // ──────────────────────────────────────────────
+        document.querySelectorAll('.lang-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('selected'));
+                chip.classList.add('selected');
+                selectedOcrLang = chip.getAttribute('data-lang');
             });
         });
+
+        // ──────────────────────────────────────────────
+        // Image Upload & Drag-Drop
+        // ──────────────────────────────────────────────
+        ocrDropZone.addEventListener('dragover', e => { e.preventDefault(); ocrDropZone.classList.add('dragover'); });
+        ocrDropZone.addEventListener('dragleave', () => ocrDropZone.classList.remove('dragover'));
+        ocrDropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            ocrDropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) processImage(file);
+        });
+
+        imageUpload.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) processImage(file);
+        });
+
+        document.getElementById('imageClearBtn').addEventListener('click', clearImage);
+
+        function clearImage() {
+            document.getElementById('imagePreviewWrap').classList.remove('visible');
+            document.getElementById('ocrDropZone').classList.remove('has-image');
+            document.getElementById('extractedTextBox').style.display = 'none';
+            document.getElementById('ocrProgress').style.display = 'none';
+            ocrExtractedText = '';
+            imageUpload.value = '';
+            scanBtn.disabled = false;
+        }
+
+        function processImage(file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showError('Image file is too large. Maximum size is 5 MB.');
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imagePreviewWrap').classList.add('visible');
+                ocrDropZone.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+
+            // Run OCR
+            runOcr(file);
+        }
+
+        function runOcr(file) {
+            isOcrRunning = true;
+            scanBtn.disabled = true;
+            ocrExtractedText = '';
+            document.getElementById('extractedTextBox').style.display = 'none';
+
+            const progressDiv  = document.getElementById('ocrProgress');
+            const progressBar  = document.getElementById('ocrProgressBar');
+            const progressText = document.getElementById('ocrProgressText');
+
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = '🔄 Initializing OCR Engine...';
+
+            Tesseract.recognize(file, selectedOcrLang, {
+                logger: m => {
+                    if (m.status === 'loading tesseract core') {
+                        progressText.textContent = '⚙️ Loading OCR Engine...';
+                        progressBar.style.width = '10%';
+                    } else if (m.status === 'initializing tesseract') {
+                        progressText.textContent = '🔧 Initializing...';
+                        progressBar.style.width = '20%';
+                    } else if (m.status === 'loading language traineddata') {
+                        progressText.textContent = `📚 Loading language model (${selectedOcrLang})...`;
+                        progressBar.style.width = '40%';
+                    } else if (m.status === 'recognizing text') {
+                        const pct = Math.round(m.progress * 100);
+                        progressText.textContent = `🔍 Extracting text... ${pct}%`;
+                        progressBar.style.width = (40 + pct * 0.55) + '%';
+                    }
+                }
+            }).then(({ data: { text } }) => {
+                progressBar.style.width = '100%';
+                progressText.textContent = '✅ Text extraction complete!';
+                isOcrRunning = false;
+
+                const cleaned = text.trim();
+                if (!cleaned) {
+                    progressText.textContent = '⚠️ No readable text found. Try a clearer image.';
+                    scanBtn.disabled = true;
+                    return;
+                }
+
+                ocrExtractedText = cleaned;
+
+                // Show extracted text preview
+                document.getElementById('extractedTextContent').textContent = cleaned;
+                document.getElementById('extractedTextBox').style.display = 'block';
+
+                scanBtn.disabled = false;
+                scanBtnText.textContent = '🛡️ Scan Extracted Text';
+
+                setTimeout(() => { progressDiv.style.display = 'none'; }, 3000);
+            }).catch(err => {
+                console.error('Tesseract error:', err);
+                progressText.textContent = '❌ OCR failed. Please try a clearer image.';
+                isOcrRunning = false;
+                scanBtn.disabled = false;
+            });
+        }
+
+        // ──────────────────────────────────────────────
+        // Main Scan Logic
+        // ──────────────────────────────────────────────
+        scanBtn.addEventListener('click', async () => {
+            hideError();
+            resultCard.style.display = 'none';
+
+            let content = '';
+            let scanInputType = currentType;
+            let isOcr = false;
+
+            if (currentType === 'sms')   content = document.getElementById('scanContentSms').value.trim();
+            if (currentType === 'upi')   content = document.getElementById('scanContentUpi').value.trim();
+            if (currentType === 'link')  content = document.getElementById('scanContentLink').value.trim();
+            if (currentType === 'image') {
+                if (!ocrExtractedText) {
+                    showError('Please upload an image first and wait for OCR to complete.');
+                    return;
+                }
+                content = ocrExtractedText;
+                scanInputType = 'sms';  // OCR text is analyzed as SMS
+                isOcr = true;
+            }
+
+            if (!content) {
+                showError('Please enter some content to scan.');
+                return;
+            }
+
+            setScanLoading(true);
+
+            try {
+                let data;
+                if (isOcr) {
+                    // Use OCR endpoint
+                    data = await authenticatedFetch('/api/scan/ocr', {
+                        method: 'POST',
+                        body: { extractedText: content, inputType: scanInputType }
+                    });
+                } else {
+                    data = await authenticatedFetch('/api/scan', {
+                        method: 'POST',
+                        body: { inputType: scanInputType, content }
+                    });
+                }
+
+                if (data && data.success) {
+                    displayResult(data.scan, isOcr, content, currentType);
+                } else {
+                    showError((data && data.message) || 'Scan failed. Please try again.');
+                }
+            } catch (err) {
+                showError('Network error. Please check your connection and try again.');
+            } finally {
+                setScanLoading(false);
+            }
+        });
+
+        function setScanLoading(on) {
+            scanBtn.disabled = on;
+            scanBtn.classList.toggle('loading', on);
+            scanBtnText.textContent = on ? 'Analyzing...' : '🛡️ Analyze Now';
+        }
+
+        // ──────────────────────────────────────────────
+        // Display Result
+        // ──────────────────────────────────────────────
+        function displayResult(scan, isOcr, rawContent, type) {
+            const verdict = (scan.verdict || 'SAFE').toUpperCase();
+            const header  = document.getElementById('resultHeader');
+            const icon    = document.getElementById('resultIcon');
+            const verdictEl = document.getElementById('resultVerdict');
+            const scoreEl   = document.getElementById('resultScore');
+            const summaryEl = document.getElementById('resultSummary');
+            const rulesEl   = document.getElementById('rulesList');
+            const actionsEl = document.getElementById('resultActions');
+            const ocrBadge  = document.getElementById('ocrBadge');
+
+            // Reset classes
+            header.className = 'result-header';
+            ocrBadge.style.display = isOcr ? 'inline-flex' : 'none';
+
+            if (verdict === 'SAFE') {
+                header.classList.add('safe');
+                icon.textContent = '✅';
+            } else if (verdict === 'HIGH RISK') {
+                header.classList.add('danger');
+                icon.textContent = '🚨';
+            } else {
+                header.classList.add('suspicious');
+                icon.textContent = '⚠️';
+            }
+
+            verdictEl.textContent = verdict;
+            scoreEl.textContent = `Risk Score: ${scan.riskScore}/100`;
+            summaryEl.textContent = scan.summary || '';
+
+            // Rules
+            rulesEl.innerHTML = '';
+            const rules = scan.matchedRules || [];
+            document.getElementById('rulesLabel').textContent =
+                rules.length > 0 ? `🔎 ${rules.length} Threat Indicator${rules.length > 1 ? 's' : ''} Found` : 'No Indicators Found';
+
+            if (rules.length === 0) {
+                rulesEl.innerHTML = '<div class="rule-item" style="border-left-color:var(--safe)"><div class="rule-desc" style="color:var(--safe)">✅ No known scam indicators matched this content.</div></div>';
+            } else {
+                rules.forEach(rule => {
+                    const div = document.createElement('div');
+                    div.className = 'rule-item';
+                    div.innerHTML = `
+                        <div class="rule-desc">${escHtml(rule.description)}</div>
+                        <div class="rule-meta">
+                            <span class="rule-badge">Category: ${escHtml(rule.category)}</span>
+                            <span class="rule-badge">Risk: +${escHtml(String(rule.scoreContribution))}</span>
+                        </div>`;
+                    rulesEl.appendChild(div);
+                });
+            }
+
+            // Actions
+            actionsEl.innerHTML = '';
+            if (verdict !== 'SAFE') {
+                const encodedVal = encodeURIComponent(rawContent.substring(0, 200));
+                const scanType   = type === 'image' ? 'sms' : type;
+                actionsEl.innerHTML = `
+                    <a href="community.html?value=${encodedVal}&type=${encodeURIComponent(scanType)}" class="action-btn primary">🚩 Report This</a>
+                    <a href="awareness.html?category=${encodeURIComponent(scanType)}" class="action-btn">📚 Learn More</a>
+                    <a href="https://cybercrime.gov.in" target="_blank" class="action-btn">🛡️ File Complaint</a>`;
+            }
+
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function showError(msg) { errorMsg.textContent = msg; errorMsg.style.display = 'block'; }
+        function hideError()    { errorMsg.style.display = 'none'; }
+
+        // ──────────────────────────────────────────────
+        // Auth Check (uses api.js)
+        // ──────────────────────────────────────────────
+        if (typeof checkAuthAndInit === 'function') {
+            checkAuthAndInit(() => {});
+        }
+
+    })();
     </script>
 </body>
 </html>
