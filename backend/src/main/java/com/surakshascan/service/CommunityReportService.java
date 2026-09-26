@@ -1,4 +1,4 @@
-﻿package com.surakshascan.service;
+package com.surakshascan.service;
 import com.google.gson.JsonObject;
 import com.surakshascan.dao.CommunityFlagDAO;
 import com.surakshascan.dao.CommunityReportDAO;

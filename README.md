@@ -1,4 +1,4 @@
-﻿# 🛡️ SurakshaScan
+# 🛡️ SurakshaScan
 
 ### Unified Scam Detection, Awareness & Community Intelligence Platform
 
@@ -1479,8 +1479,95 @@ Do not claim a license unless the repository actually uses that license.
 
 ---
 
-# 🛡️ SurakshaScan
+---
 
-### Detect. Understand. Verify. Stay Safe.
+## Security Architecture
 
-**A unified platform for scam detection, cyber awareness, community intelligence and digital safety.**
+- **Authentication**: Stateful session-based authentication with HTTP-only cookies.
+- **Authorization**: Server-side RBAC — Normal User / Guardian / Admin. Enforced in `SecurityFilter.java`.
+- **Password Hashing**: PBKDF2WithHmacSHA256 with unique salts via `PasswordUtil.java`.
+- **Session Security**: 30-minute inactivity timeout. Session invalidated on login to prevent fixation.
+- **Rate Limiting**: In-memory Token Bucket per IP — 5 req/min for login/register, 10/min for scanner, 100/min general.
+- **Input Validation**: Length, format (email regex), and enum constraints enforced server-side.
+- **SQL Injection Protection**: All queries use JDBC `PreparedStatement`. No user-data string concatenation in SQL.
+- **IDOR Protection**: Scan, history, and guardian resources validated against session `userId`.
+- **Security Headers**: CSP, X-Frame-Options (DENY), X-Content-Type-Options, Referrer-Policy.
+- **Logging & Auditing**: Admin actions → `admin_audit_logs`. Security alerts → `security_events`.
+- **Health Monitoring**: `/api/health` reports UP/DEGRADED without exposing internals.
+
+## Advanced Analytics
+
+- **Threat Intelligence Dashboard**: Admin-only analytics view with time-period filtering.
+- **Time-Period Filtering**: Today, 7D, 30D, 90D, All Time — affects all applicable charts.
+- **Scan Volume & High-Risk Trends**: Line charts showing scan activity over time.
+- **Verdict Distribution**: Donut chart — Safe / Suspicious / High Risk proportions.
+- **Scan Type Analysis**: Donut chart — SMS / UPI / Link scan proportions.
+- **Community Intelligence**: Report trend, active flags count, top flagged indicators (masked).
+- **Security Activity**: Login failures, rate limit triggers, unauthorized access counts.
+- **Admin Activity Summary**: Recent audit log entries summarized.
+- **Privacy**: Phone numbers and sensitive identifiers are masked before rendering.
+- **Real Data Only**: Analytics are calculated from actual database records. No fabricated metrics.
+
+> Analytics are calculated from platform records and do not represent independently verified real-world fraud statistics.
+
+---
+
+## Screenshots
+
+> Screenshots to be added after deployment to a live environment.
+>
+> Suggested screenshots:
+> - Landing / Login Page
+> - Dashboard Overview
+> - Scam Scanner — Result
+> - Scan History
+> - Awareness Center
+> - Community Reporting
+> - Guardian Family Safety
+> - Admin Dashboard
+> - Admin Analytics / Threat Intelligence
+
+---
+
+## Implemented Features
+
+| Feature | Status |
+|---------|--------|
+| User Registration & Login | ✅ Implemented |
+| Session Management & Security | ✅ Implemented |
+| SMS / UPI / Link Scanner | ✅ Implemented |
+| Rule-Based Risk Engine | ✅ Implemented |
+| Scan History with IDOR protection | ✅ Implemented |
+| Awareness Center & Quiz | ✅ Implemented |
+| Community Reporting | ✅ Implemented |
+| Guardian / Dependent System | ✅ Implemented |
+| Guardian Alerts | ✅ Implemented |
+| Admin Dashboard | ✅ Implemented |
+| Scam Pattern Management | ✅ Implemented |
+| Community Flag Moderation | ✅ Implemented |
+| User Management | ✅ Implemented |
+| Audit Logging | ✅ Implemented |
+| Security Event Logging | ✅ Implemented |
+| Rate Limiting | ✅ Implemented |
+| Login Abuse Protection | ✅ Implemented |
+| Security Headers | ✅ Implemented |
+| Health Monitoring | ✅ Implemented |
+| Threat Intelligence Analytics | ✅ Implemented |
+| 404 Error Page | ✅ Implemented |
+| Responsive Mobile Layout | ✅ Implemented |
+
+## Future Enhancements
+
+| Enhancement | Notes |
+|-------------|-------|
+| Analytics CSV Export | Deferred to maintain servlet architecture simplicity |
+| Print-Friendly Reports | Deferred — browser native print available as workaround |
+| Distributed Rate Limiting | Requires Redis or shared storage for multi-node deployments |
+| Email Notifications | Requires SMTP integration |
+| Two-Factor Authentication | Security enhancement for future iteration |
+| Distributed Session Storage | Required for horizontal scaling |
+
+---
+
+*SurakshaScan — Built with Java Servlets, JDBC, MySQL, HTML5, CSS3, and Vanilla JavaScript.*
+

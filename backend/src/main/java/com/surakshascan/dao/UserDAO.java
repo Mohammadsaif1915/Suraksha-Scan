@@ -1,4 +1,4 @@
-﻿package com.surakshascan.dao;
+package com.surakshascan.dao;
 
 import com.surakshascan.model.User;
 import com.surakshascan.util.DatabaseConnection;

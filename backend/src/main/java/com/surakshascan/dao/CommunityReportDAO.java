@@ -1,4 +1,4 @@
-﻿package com.surakshascan.dao;
+package com.surakshascan.dao;
 import java.sql.*;
 public class CommunityReportDAO {
     public boolean hasUserReported(Connection conn, int userId, String flaggedValue, String type) throws SQLException {

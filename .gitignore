@@ -1,6 +1,27 @@
+# Build artifacts
 target/
+*.class
+*.war
+
+# IDE metadata
 .idea/
 *.iml
 .vscode/
 .DS_Store
+
+# Logs
+*.log
+logs/
+
+# Sensitive configuration (NEVER commit credentials)
 backend/src/main/resources/application.properties
+.env
+config.properties
+database.properties
+
+# Temporary files
+*.tmp
+*.swp
+
+# OS files
+Thumbs.db

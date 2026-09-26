@@ -1,4 +1,4 @@
-﻿package com.surakshascan.filter;
+package com.surakshascan.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

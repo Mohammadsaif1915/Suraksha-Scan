@@ -1,4 +1,4 @@
-﻿package com.surakshascan.util;
+package com.surakshascan.util;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;

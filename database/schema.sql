@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS scam_patterns (
     category ENUM('sms', 'upi', 'link', 'call') NOT NULL,
     pattern_text VARCHAR(255) NOT NULL,
     pattern_type ENUM('keyword', 'regex') NOT NULL,
-    risk_weight INT NOT NULL CHECK(risk_weight BETWEEN 1 AND 10),
+    risk_weight INT NOT NULL CHECK(risk_weight BETWEEN 1 AND 100),
     description TEXT
 );
 
@@ -143,4 +143,18 @@ CREATE TABLE IF NOT EXISTS admin_audit_logs (
     FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE CASCADE,
     INDEX idx_audit_admin (admin_id),
     INDEX idx_audit_created (created_at)
+);
+
+-- Step 10: Security Events
+CREATE TABLE IF NOT EXISTS security_events (
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    event_type VARCHAR(50) NOT NULL,
+    endpoint VARCHAR(255) NOT NULL,
+    success BOOLEAN NOT NULL,
+    metadata TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+    INDEX idx_security_event_type (event_type),
+    INDEX idx_security_created_at (created_at)
 );

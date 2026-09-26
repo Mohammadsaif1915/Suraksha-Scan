@@ -1,42 +1,666 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - SurakshaScan</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Register for SurakshaScan — Cyber Safety Platform">
+    <title>SurakshaScan — Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0C2340;
+            --navy-2: #123258;
+            --marigold: #F2A73B;
+            --marigold-dark: #D98C1F;
+            --paper: #F1ECDD;
+            --surface: #FAF6EC;
+            --ink: #16202E;
+            --ink-soft: #5A6B7D;
+            --line: #DFD6BE;
+            --safe: #2E8B57;
+            --warn: #C98A1E;
+            --danger: #D64545;
+            --radius-s: 10px;
+            --radius-m: 18px;
+            --radius-l: 28px;
+            --shadow: 0 24px 50px -22px rgba(12, 35, 64, 0.28);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #0B1622;
+                --surface: #101E2E;
+                --ink: #EDF1F5;
+                --ink-soft: #9FB0C0;
+                --line: #22314480;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            min-height: 100%;
+        }
+
+        h1,
+        h2,
+        .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--marigold);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation-duration: .001s !important;
+                transition-duration: .001s !important;
+            }
+        }
+
+        /* left brand panel */
+        .brand-panel {
+            position: relative;
+            background: var(--navy);
+            color: #EAF0F6;
+            padding: 52px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: -140px;
+            right: -140px;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(242, 167, 59, .22), transparent 70%);
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -160px;
+            left: -120px;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, .05), transparent 70%);
+        }
+
+        .brand-top {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-top a {
+            font-size: 22px;
+            font-weight: 800;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-top a em {
+            font-style: normal;
+            color: var(--marigold);
+        }
+
+        .brand-mid {
+            position: relative;
+            z-index: 1;
+            max-width: 420px;
+        }
+
+        .brand-mid h1 {
+            font-size: clamp(28px, 3vw, 36px);
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .brand-mid p {
+            color: #B9C7D6;
+            font-size: 15.5px;
+            line-height: 1.6;
+            margin-bottom: 26px;
+        }
+
+        .perk-list {
+            position: relative;
+            z-index: 1;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .perk-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14.5px;
+            color: #DCE5EE;
+        }
+
+        .perk-list .tick {
+            width: 24px;
+            height: 24px;
+            flex: none;
+            border-radius: 50%;
+            background: rgba(242, 167, 59, .18);
+            color: var(--marigold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .trust-strip {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            margin-top: 34px;
+        }
+
+        .trust-strip .t b {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            color: var(--marigold);
+        }
+
+        .trust-strip .t span {
+            font-size: 12.5px;
+            color: #9FB0C0;
+        }
+
+        /* right form panel */
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 460px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            padding: 40px 38px;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--marigold), var(--marigold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+
+        .auth-container h2 {
+            font-size: 26px;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            .auth-container h2 {
+                color: var(--ink);
+            }
+        }
+
+        .auth-container h2 span {
+            color: var(--marigold-dark);
+        }
+
+        .auth-sub {
+            color: var(--ink-soft);
+            font-size: 14.5px;
+            margin-bottom: 24px;
+        }
+
+        .error-message {
+            background: rgba(214, 69, 69, .1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 11px 14px;
+            border-radius: var(--radius-s);
+            font-size: 13.5px;
+            margin-bottom: 18px;
+        }
+
+        .success-message {
+            background: rgba(46, 139, 87, .1);
+            border: 1px solid var(--safe);
+            color: var(--safe);
+            padding: 11px 14px;
+            border-radius: var(--radius-s);
+            font-size: 13.5px;
+            margin-bottom: 18px;
+        }
+
+        .row2 {
+            display: flex;
+            gap: 14px;
+        }
+
+        .row2 .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14.5px;
+            opacity: .6;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12.5px 14px 12.5px 40px;
+            border-radius: var(--radius-s);
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14.5px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--navy);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(12, 35, 64, .08);
+        }
+
+        .form-group input.invalid {
+            border-color: var(--danger);
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin-top: 5px;
+        }
+
+        .field-error {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 5px;
+            display: none;
+        }
+
+        .strength-wrap {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .strength-wrap span {
+            height: 5px;
+            flex: 1;
+            border-radius: 3px;
+            background: var(--line);
+            transition: background .25s;
+        }
+
+        .strength-label {
+            font-size: 12px;
+            margin-top: 6px;
+            color: var(--ink-soft);
+        }
+
+        #registerBtn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 999px;
+            background: var(--navy);
+            color: #fff;
+            font-weight: 700;
+            font-size: 15.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background .2s, transform .18s, box-shadow .2s;
+            margin-top: 4px;
+        }
+
+        #registerBtn:hover {
+            background: var(--navy-2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px -10px rgba(12, 35, 64, .5);
+        }
+
+        #registerBtn:active {
+            transform: translateY(0);
+        }
+
+        #registerBtn:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2.5px solid rgba(255, 255, 255, .4);
+            border-top-color: #fff;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        #registerBtn.loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .terms-line {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        .auth-container>p {
+            text-align: center;
+            font-size: 14px;
+            color: var(--ink-soft);
+            margin-top: 20px;
+        }
+
+        .auth-container>p a {
+            color: var(--navy);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            .auth-container>p a {
+                color: var(--marigold);
+            }
+        }
+
+        .auth-container>p a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: .2s;
+            z-index: 5;
+        }
+
+        .back-home:hover {
+            border-color: var(--navy);
+            color: var(--ink);
+        }
+
+        @media (max-width:920px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .form-panel {
+                padding-top: 76px;
+            }
+        }
+
+        @media (max-width:480px) {
+            .row2 {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .auth-container {
+                padding: 30px 24px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="auth-container">
-        <h2>Register for SurakshaScan</h2>
-        <div id="registerError" class="error-message" style="display: none;"></div>
-        <div id="registerSuccess" class="success-message" style="display: none;"></div>
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="regName">Full Name</label>
-                <input type="text" id="regName" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="regEmail">Email Address</label>
-                <input type="email" id="regEmail" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="regPassword">Password</label>
-                <input type="password" id="regPassword" name="password" minlength="6" required>
-            </div>
-            <div class="form-group">
-                <label for="regRole">Account Type</label>
-                <select id="regRole" name="role" required>
-                    <option value="normal">Normal User</option>
-                    <option value="guardian">Guardian</option>
-                </select>
-            </div>
-            <button type="submit" id="registerBtn">Register</button>
-        </form>
-        <p>Already have an account? <a href="login.html">Login here</a></p>
-    </div>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
+
+    <a href="index.html" class="back-home">← Back to home</a>
+
+    <section class="brand-panel">
+        <div class="brand-top"><a href="index.html">Suraksha<em>Scan</em></a></div>
+        <div class="brand-mid">
+            <h1>Join thousands staying ahead of scammers.</h1>
+            <p>Create a free account and get instant access to message scanning, screenshot checks, and
+                community-reported threats — in English, Hindi or Marathi.</p>
+            <ul class="perk-list">
+                <li><span class="tick">✓</span> Unlimited message &amp; screenshot scans</li>
+                <li><span class="tick">✓</span> Personal scan history dashboard</li>
+                <li><span class="tick">✓</span> Optional SMS alerts for new scams</li>
+            </ul>
+        </div>
+        <div class="trust-strip">
+            <div class="t"><b>50,000+</b><span>scams caught</span></div>
+            <div class="t"><b>3</b><span>languages</span></div>
+            <div class="t"><b>Free</b><span>forever plan</span></div>
+        </div>
+    </section>
+
+    <section class="form-panel">
+        <div class="auth-container">
+            <div class="auth-icon">🛡️</div>
+            <h2>Join <span>SurakshaScan</span></h2>
+            <p class="auth-sub">It takes less than a minute — no credit card needed.</p>
+
+            <div id="registerError" class="error-message" style="display:none;"></div>
+            <div id="registerSuccess" class="success-message" style="display:none;"></div>
+
+            <form id="registerForm" novalidate>
+                <div class="row2">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span style="color:var(--danger)">*</span></label>
+                        <div class="input-wrap"><span class="icon">👤</span>
+                            <input type="text" id="firstName" name="firstName" required placeholder="John">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span style="color:var(--danger)">*</span></label>
+                        <div class="input-wrap"><span class="icon">👤</span>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Doe">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span style="color:var(--danger)">*</span></label>
+                    <div class="input-wrap"><span class="icon">✉️</span>
+                        <input type="email" id="email" name="email" required placeholder="john.doe@example.com">
+                    </div>
+                    <div class="field-error" id="emailError">Please enter a valid email address.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-wrap"><span class="icon">📱</span>
+                        <input type="tel" id="phone" name="phone" placeholder="+91 12345 67890">
+                    </div>
+                    <div class="hint">Optional: used for SMS scam alerts</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password <span style="color:var(--danger)">*</span></label>
+                    <div class="input-wrap"><span class="icon">🔒</span>
+                        <input type="password" id="password" name="password" required
+                            placeholder="Minimum 8 characters, secure">
+                    </div>
+                    <div class="strength-wrap"><span></span><span></span><span></span><span></span></div>
+                    <div class="strength-label" id="strengthLabel">Password strength</div>
+                </div>
+
+                <button type="submit" id="registerBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Create Account</span>
+                </button>
+                <p class="terms-line">By registering you agree to our Terms of Service and Privacy Policy.</p>
+            </form>
+
+            <p>Already have an account? <a href="login.html">Sign in instead</a></p>
+        </div>
+    </section>
+
+    <script>
+        const pwInput = document.getElementById('password');
+        const bars = document.querySelectorAll('.strength-wrap span');
+        const strengthLabel = document.getElementById('strengthLabel');
+        const colors = ['var(--danger)', 'var(--warn)', 'var(--marigold-dark)', 'var(--safe)'];
+        const labels = ['Too weak', 'Weak', 'Good', 'Strong'];
+
+        pwInput.addEventListener('input', function () {
+            const v = this.value;
+            let score = 0;
+            if (v.length >= 8) score++;
+            if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+            if (/\d/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
+            bars.forEach((b, i) => b.style.background = i < score ? colors[Math.max(score - 1, 0)] : 'var(--line)');
+            strengthLabel.textContent = v.length ? labels[Math.max(score - 1, 0)] : 'Password strength';
+            strengthLabel.style.color = v.length ? colors[Math.max(score - 1, 0)] : 'var(--ink-soft)';
+        });
+
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        emailInput.addEventListener('blur', function () {
+            const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
+            this.classList.toggle('invalid', this.value.length > 0 && !ok);
+            emailError.style.display = (this.value.length > 0 && !ok) ? 'block' : 'none';
+        });
+
+        const form = document.getElementById('registerForm');
+        const errBox = document.getElementById('registerError');
+        const successBox = document.getElementById('registerSuccess');
+        const btn = document.getElementById('registerBtn');
+        const btnText = btn.querySelector('.btn-text');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errBox.style.display = 'none';
+            successBox.style.display = 'none';
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = emailInput.value.trim();
+            const password = pwInput.value;
+
+            if (!firstName || !lastName || !email || !password) {
+                errBox.textContent = 'Please fill in all required fields.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errBox.textContent = 'Please enter a valid email address.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (password.length < 8) {
+                errBox.textContent = 'Password must be at least 8 characters long.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btnText.textContent = 'Creating account...';
+
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btnText.textContent = 'Create Account';
+                successBox.textContent = 'This is a design preview — connect a signup API to create real accounts. Redirecting to sign in...';
+                successBox.style.display = 'block';
+            }, 1100);
+        });
+    </script>
 </body>
+
 </html>

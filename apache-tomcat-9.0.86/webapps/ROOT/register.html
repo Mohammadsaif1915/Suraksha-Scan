@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register for SurakshaScan — Cyber Safety Platform">
+    <title>SurakshaScan — Register</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Join <span>SurakshaScan</span></h2>
+        <div id="registerError" class="error-message" style="display: none;"></div>
+        <div id="registerSuccess" class="success-message" style="display: none;"></div>
+        <form id="registerForm">
+            <div style="display:flex; gap:15px">
+                <div class="form-group" style="flex:1">
+                    <label for="firstName">First Name <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="firstName" name="firstName" required placeholder="John">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label for="lastName">Last Name <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="lastName" name="lastName" required placeholder="Doe">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address <span style="color:var(--danger)">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="john.doe@example.com">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+1 234 567 8900">
+                <div style="font-size:12px; color:var(--text-muted); margin-top:4px">Optional: Used for SMS scam alerts</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password <span style="color:var(--danger)">*</span></label>
+                <input type="password" id="password" name="password" required placeholder="Minimum 8 characters, secure">
+            </div>
+            <button type="submit" id="registerBtn">Create Account</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Sign in instead</a></p>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

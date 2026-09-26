@@ -1,4 +1,4 @@
-﻿package com.surakshascan.util;
+package com.surakshascan.util;
 import java.net.URI;
 public class InputNormalizer {
     public static String normalize(String input) {

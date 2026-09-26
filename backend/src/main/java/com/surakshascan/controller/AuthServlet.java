@@ -1,4 +1,4 @@
-﻿package com.surakshascan.controller;
+package com.surakshascan.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

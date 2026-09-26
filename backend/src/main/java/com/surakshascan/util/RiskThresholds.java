@@ -1,4 +1,4 @@
-﻿package com.surakshascan.util;
+package com.surakshascan.util;
 public class RiskThresholds {
     public static final int SUSPICIOUS_MIN = 20;
     public static final int HIGH_RISK_MIN = 50;

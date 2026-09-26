@@ -1,30 +1,525 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SurakshaScan</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="Sign in to SurakshaScan — Scam Detection & Cyber Safety Platform">
+    <title>SurakshaScan — Sign In (Copy)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0C2340;
+            --navy-2: #123258;
+            --marigold: #F2A73B;
+            --marigold-dark: #D98C1F;
+            --paper: #F1ECDD;
+            --surface: #FAF6EC;
+            --ink: #16202E;
+            --ink-soft: #5A6B7D;
+            --line: #DFD6BE;
+            --safe: #2E8B57;
+            --danger: #D64545;
+            --radius-s: 10px;
+            --radius-m: 18px;
+            --radius-l: 28px;
+            --shadow: 0 24px 50px -22px rgba(12, 35, 64, 0.28);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #0B1622;
+                --surface: #101E2E;
+                --ink: #EDF1F5;
+                --ink-soft: #9FB0C0;
+                --line: #22314480;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            min-height: 100%;
+        }
+
+        h1,
+        h2,
+        .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--marigold);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation-duration: .001s !important;
+                transition-duration: .001s !important;
+            }
+        }
+
+        /* left brand panel */
+        .brand-panel {
+            position: relative;
+            background: var(--navy);
+            color: #EAF0F6;
+            padding: 52px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: -140px;
+            right: -140px;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(242, 167, 59, .22), transparent 70%);
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -160px;
+            left: -120px;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, .05), transparent 70%);
+        }
+
+        .brand-top {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-top a {
+            font-size: 22px;
+            font-weight: 800;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-top a em {
+            font-style: normal;
+            color: var(--marigold);
+        }
+
+        .brand-mid {
+            position: relative;
+            z-index: 1;
+            max-width: 420px;
+        }
+
+        .brand-mid h1 {
+            font-size: clamp(28px, 3vw, 36px);
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .brand-mid p {
+            color: #B9C7D6;
+            font-size: 15.5px;
+            line-height: 1.6;
+        }
+
+        .trust-strip {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .trust-strip .t b {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            color: var(--marigold);
+        }
+
+        .trust-strip .t span {
+            font-size: 12.5px;
+            color: #9FB0C0;
+        }
+
+        /* right form panel */
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            padding: 44px 38px;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--marigold), var(--marigold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .auth-container h2 {
+            font-size: 26px;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            .auth-container h2 {
+                color: var(--ink);
+            }
+        }
+
+        .auth-container h2 span {
+            color: var(--marigold-dark);
+        }
+
+        .auth-sub {
+            color: var(--ink-soft);
+            font-size: 14.5px;
+            margin-bottom: 28px;
+        }
+
+        .error-message {
+            background: rgba(214, 69, 69, .1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 11px 14px;
+            border-radius: var(--radius-s);
+            font-size: 13.5px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            opacity: .6;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px 13px 40px;
+            border-radius: var(--radius-s);
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14.5px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--navy);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(12, 35, 64, .08);
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: 9px;
+            font-size: 13px;
+            color: var(--navy-2);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            .forgot-password {
+                color: var(--marigold);
+            }
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        #loginBtn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 999px;
+            background: var(--navy);
+            color: #fff;
+            font-weight: 700;
+            font-size: 15.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background .2s, transform .18s, box-shadow .2s;
+            margin-top: 6px;
+        }
+
+        #loginBtn:hover {
+            background: var(--navy-2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px -10px rgba(12, 35, 64, .5);
+        }
+
+        #loginBtn:active {
+            transform: translateY(0);
+        }
+
+        #loginBtn:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2.5px solid rgba(255, 255, 255, .4);
+            border-top-color: #fff;
+            animation: spin .7s linear infinite;
+            display: none;
+        }
+
+        #loginBtn.loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 26px 0;
+            color: var(--ink-soft);
+            font-size: 12.5px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        .auth-container>p {
+            text-align: center;
+            font-size: 14px;
+            color: var(--ink-soft);
+        }
+
+        .auth-container>p a {
+            color: var(--navy);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            .auth-container>p a {
+                color: var(--marigold);
+            }
+        }
+
+        .auth-container>p a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: .2s;
+            z-index: 5;
+        }
+
+        .back-home:hover {
+            border-color: var(--navy);
+            color: var(--ink);
+        }
+
+        @media (max-width:920px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .form-panel {
+                padding-top: 76px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="auth-container">
-        <h2>Login to SurakshaScan</h2>
-        <div id="loginError" class="error-message" style="display: none;"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" id="loginBtn">Login</button>
-        </form>
-        <p>Don't have an account? <a href="register.html">Register here</a></p>
-    </div>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
+
+    <a href="index.html" class="back-home">← Back to home</a>
+
+    <section class="brand-panel">
+        <div class="brand-top"><a href="index.html">Suraksha<em>Scan</em></a></div>
+        <div class="brand-mid">
+            <h1>Welcome back. Your protection picks up right where you left off.</h1>
+            <p>Sign in to check your scan history, saved alerts, and the latest scam reports from your community — in
+                English, Hindi or Marathi.</p>
+        </div>
+        <div class="trust-strip">
+            <div class="t"><b>50,000+</b><span>scams caught</span></div>
+            <div class="t"><b>3</b><span>languages</span></div>
+            <div class="t"><b>24/7</b><span>protection</span></div>
+        </div>
+    </section>
+
+    <section class="form-panel">
+        <div class="auth-container">
+            <div class="auth-icon">🛡️</div>
+            <h2>Login to <span>SurakshaScan</span></h2>
+            <p class="auth-sub">Enter your details to access your safety dashboard.</p>
+
+            <div id="loginError" class="error-message" style="display:none;"></div>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="email">Email Address <span style="color:var(--danger)">*</span></label>
+                    <div class="input-wrap">
+                        <span class="icon">✉️</span>
+                        <input type="email" id="email" name="email" required placeholder="Enter your registered email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password <span style="color:var(--danger)">*</span></label>
+                    <div class="input-wrap">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    </div>
+                    <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" id="loginBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Sign In securely</span>
+                </button>
+            </form>
+
+            <div class="divider">or</div>
+            <p>Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
+    </section>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const errBox = document.getElementById('loginError');
+        const btn = document.getElementById('loginBtn');
+        const btnText = btn.querySelector('.btn-text');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errBox.style.display = 'none';
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value;
+
+            if (!email || !pass) {
+                errBox.textContent = 'Please fill in both your email and password.';
+                errBox.style.display = 'block';
+                return;
+            }
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btnText.textContent = 'Signing in...';
+
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btnText.textContent = 'Sign In securely';
+                errBox.textContent = 'This is a design preview — connect a login API to enable sign-in.';
+                errBox.style.background = 'rgba(46,139,87,.1)';
+                errBox.style.borderColor = 'var(--safe)';
+                errBox.style.color = 'var(--safe)';
+                errBox.style.display = 'block';
+            }, 1100);
+        });
+
+    </script>
 </body>
+
 </html>

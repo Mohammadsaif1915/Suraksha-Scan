@@ -1,4 +1,4 @@
-﻿package com.surakshascan.model;
+package com.surakshascan.model;
 import java.sql.Timestamp;
 public class CommunityReport {
     private int reportId;

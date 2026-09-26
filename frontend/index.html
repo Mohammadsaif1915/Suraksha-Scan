@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description"
+        content="SurakshaScan — detect scams, fake messages and fraud links in seconds. For every age, in your language.">
+    <title>SurakshaScan — Detect Scams &amp; Stay Safe Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0C2340;
+            --navy-2: #123258;
+            --marigold: #F2A73B;
+            --marigold-dark: #D98C1F;
+            --paper: #F1ECDD;
+            --surface: #FAF6EC;
+            --ink: #16202E;
+            --ink-soft: #5A6B7D;
+            --line: #DFD6BE;
+            --safe: #2E8B57;
+            --danger: #D64545;
+            --radius-s: 10px;
+            --radius-m: 18px;
+            --radius-l: 28px;
+            --shadow: 0 18px 40px -20px rgba(12, 35, 64, 0.25);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        :root:not([data-theme="light"]) {}
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --paper: #0B1622;
+                --surface: #101E2E;
+                --ink: #EDF1F5;
+                --ink-soft: #9FB0C0;
+                --line: #22314480;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --paper: #0B1622;
+            --surface: #101E2E;
+            --ink: #EDF1F5;
+            --ink-soft: #9FB0C0;
+            --line: #22314480;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: env(safe-area-inset-top, 64px);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.55;
+            overflow-x: hidden;
+            min-height: 100%;
+            transition: background .3s, color .3s;
+        }
+
+        html[data-lang="hi"] body,
+        html[data-lang="mr"] body {
+            font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html[data-lang="hi"] h1,
+        html[data-lang="hi"] h2,
+        html[data-lang="hi"] h3,
+        html[data-lang="hi"] h4,
+        html[data-lang="mr"] h1,
+        html[data-lang="mr"] h2,
+        html[data-lang="mr"] h3,
+        html[data-lang="mr"] h4 {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-weight: 700;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .overflow-x {
+            overflow-x: auto;
+        }
+
+        ::selection {
+            background: var(--marigold);
+            color: var(--navy);
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--marigold);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: .001s !important;
+                transition-duration: .001s !important;
+            }
+        }
+
+        /* ---------- NAV ---------- */
+        header.nav-wrap {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding-top: env(safe-area-inset-top, 0px);
+            background: color-mix(in srgb, var(--paper) 88%, transparent);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        nav {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        html[data-theme="dark"] .brand,
+        body:has(:root[data-theme="dark"]) .brand {
+            color: var(--ink);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .brand {
+                color: var(--ink);
+            }
+        }
+
+        .brand em {
+            font-style: normal;
+            color: var(--marigold-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: var(--ink-soft);
+            padding: 6px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: var(--marigold-dark);
+            transition: width .25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-toggle {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 3px;
+        }
+
+        .lang-toggle button {
+            border: none;
+            background: transparent;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--ink-soft);
+            transition: .2s;
+        }
+
+        .lang-toggle button.active {
+            background: var(--navy);
+            color: #fff;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border-color: var(--line);
+            color: var(--ink);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--navy);
+        }
+
+        .btn-primary {
+            background: var(--navy);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--navy-2);
+            box-shadow: 0 10px 24px -8px rgba(12, 35, 64, .55);
+        }
+
+        .btn-accent {
+            background: var(--marigold);
+            color: var(--navy);
+        }
+
+        .btn-accent:hover {
+            background: var(--marigold-dark);
+            box-shadow: 0 10px 24px -8px rgba(217, 140, 31, .55);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--ink);
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            position: relative;
+            padding: 88px 24px 60px;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 56px;
+            align-items: center;
+        }
+
+        .hero-blob {
+            position: absolute;
+            top: -160px;
+            right: -160px;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(242, 167, 59, .28), transparent 70%);
+            z-index: 0;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: 22px;
+        }
+
+        .eyebrow-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--safe);
+        }
+
+        .hero h1 {
+            font-size: clamp(34px, 5vw, 54px);
+            font-weight: 800;
+            line-height: 1.14;
+            color: var(--navy);
+            margin-bottom: 20px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero h1 {
+                color: var(--ink);
+            }
+        }
+
+        :root[data-theme="dark"] .hero h1 {
+            color: var(--ink);
+        }
+
+        .hero p.lead {
+            font-size: 18px;
+            color: var(--ink-soft);
+            max-width: 520px;
+            margin-bottom: 34px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 34px;
+        }
+
+        .trust-row {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .trust-row .stat b {
+            display: block;
+            font-size: 22px;
+            color: var(--navy);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root[data-theme="dark"] .trust-row .stat b {
+            color: var(--marigold);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .trust-row .stat b {
+                color: var(--marigold);
+            }
+        }
+
+        .trust-row .stat span {
+            font-size: 13px;
+            color: var(--ink-soft);
+        }
+
+        /* phone mock */
+        .phone {
+            position: relative;
+            z-index: 1;
+            margin-inline: auto;
+            width: min(300px, 80vw);
+            background: var(--navy);
+            border-radius: 36px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .phone-screen {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 18px;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-bubble {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            padding: 10px 14px;
+            border-radius: 14px 14px 14px 4px;
+            font-size: 13px;
+            max-width: 90%;
+        }
+
+        .chat-bubble.alert {
+            border-color: var(--danger);
+            background: rgba(214, 69, 69, .08);
+        }
+
+        .verdict-card {
+            margin-top: auto;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .verdict-card .big {
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .verdict-card small {
+            opacity: .85;
+            font-size: 12px;
+        }
+
+        /* ---------- SECTION HEADERS ---------- */
+        .section {
+            padding: 90px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 52px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(28px, 3.6vw, 38px);
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        :root[data-theme="dark"] .section-header h2 {
+            color: var(--ink);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .section-header h2 {
+                color: var(--ink);
+            }
+        }
+
+        .section-header p {
+            color: var(--ink-soft);
+            font-size: 17px;
+        }
+
+        .section-alt {
+            background: var(--surface);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        /* ---------- FEATURES ---------- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 26px;
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 30px;
+            transition: transform .25s, box-shadow .25s, border-color .25s;
+        }
+
+        .section-alt .feature-card {
+            background: var(--paper);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow);
+            border-color: var(--marigold);
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 19px;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        :root[data-theme="dark"] .feature-card h3 {
+            color: var(--ink);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .feature-card h3 {
+                color: var(--ink);
+            }
+        }
+
+        .feature-card p {
+            color: var(--ink-soft);
+            font-size: 14.5px;
+        }
+
+        .badge-new {
+            background: var(--marigold);
+            color: var(--navy);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* ---------- AUDIENCE ---------- */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .audience-card {
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 28px 20px;
+            transition: .25s;
+        }
+
+        .audience-card:hover {
+            border-color: var(--navy);
+            transform: scale(1.03);
+        }
+
+        .audience-card .emoji {
+            font-size: 44px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .audience-card h4 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        :root[data-theme="dark"] .audience-card h4 {
+            color: var(--ink);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .audience-card h4 {
+                color: var(--ink);
+            }
+        }
+
+        .audience-card p {
+            font-size: 13.5px;
+            color: var(--ink-soft);
+        }
+
+        /* ---------- STEPS ---------- */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 34px;
+            max-width: 1180px;
+            margin: 0 auto;
+            counter-reset: step;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 52px;
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .step h4 {
+            font-size: 18px;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        :root[data-theme="dark"] .step h4 {
+            color: var(--ink);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .step h4 {
+                color: var(--ink);
+            }
+        }
+
+        .step p {
+            color: var(--ink-soft);
+            font-size: 14.5px;
+        }
+
+        /* ---------- TESTIMONIALS ---------- */
+        .testi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .testi-card {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 26px;
+            transition: .25s;
+        }
+
+        .testi-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .testi-card p {
+            font-size: 15px;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+
+        .testi-who {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .testi-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--marigold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--navy);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .testi-who b {
+            font-size: 14px;
+        }
+
+        .testi-who span {
+            font-size: 12px;
+            color: var(--ink-soft);
+        }
+
+        /* ---------- CONTACT ---------- */
+        .contact-wrap {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-l);
+            padding: 44px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        .field input,
+        .field textarea {
+            padding: 12px 14px;
+            border-radius: var(--radius-s);
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14.5px;
+            transition: border-color .2s;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--navy);
+            outline: none;
+        }
+
+        .field textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .contact-submit {
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        .form-success .check {
+            font-size: 44px;
+            margin-bottom: 10px;
+        }
+
+        /* ---------- FOOTER ---------- */
+        footer {
+            background: var(--navy);
+            color: #D9E2EC;
+            padding: 64px 24px 28px;
+        }
+
+        .footer-grid {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.3fr;
+            gap: 40px;
+        }
+
+        .footer-brand .brand {
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand p {
+            color: #AFC0D2;
+            font-size: 14px;
+            max-width: 280px;
+        }
+
+        .footer-col h5 {
+            font-size: 14px;
+            margin-bottom: 16px;
+            color: #fff;
+            letter-spacing: .02em;
+        }
+
+        .footer-col a {
+            display: block;
+            color: #AFC0D2;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: color .2s;
+        }
+
+        .footer-col a:hover {
+            color: var(--marigold);
+        }
+
+        .social-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .social-row a {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s;
+        }
+
+        .social-row a:hover {
+            background: var(--marigold);
+            transform: translateY(-3px);
+        }
+
+        .social-row svg {
+            width: 17px;
+            height: 17px;
+            fill: #fff;
+        }
+
+        .footer-bottom {
+            max-width: 1180px;
+            margin: 44px auto 0;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, .12);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 13px;
+            color: #8FA3B8;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width:900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phone {
+                order: -1;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width:720px) {
+            .nav-links {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: var(--surface);
+                flex-direction: column;
+                padding: 20px 24px;
+                gap: 16px;
+                border-bottom: 1px solid var(--line);
+                transform: translateY(-130%);
+                transition: transform .3s;
+            }
+
+            .nav-links.open {
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .nav-right .btn-outline {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .contact-wrap {
+                padding: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="nav-wrap">
+        <nav>
+            <a href="#top" class="brand">Suraksha<em>Scan</em></a>
+            <div class="nav-links" id="navLinks">
+                <a href="#features" data-i18n="nav_features">Features</a>
+                <a href="#audience" data-i18n="nav_audience">Who it's for</a>
+                <a href="#how" data-i18n="nav_how">How it Works</a>
+                <a href="#contact" data-i18n="nav_contact">Contact</a>
+            </div>
+            <div class="nav-right">
+                <div class="lang-toggle" role="group" aria-label="Language">
+                    <button data-lang-btn="en" class="active">EN</button>
+                    <button data-lang-btn="hi">हिं</button>
+                    <button data-lang-btn="mr">मर</button>
+                </div>
+                <a href="login.html" class="btn btn-outline" data-i18n="nav_signin">Sign In</a>
+                <a href="register.html" class="btn btn-primary" data-i18n="nav_start">Get Started</a>
+                <button class="hamburger" id="hamburgerBtn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero" id="top">
+        <div class="hero-blob"></div>
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow-badge"><span class="dot"></span><span data-i18n="hero_badge">Live threat database
+                        updated daily</span></div>
+                <h1 data-i18n="hero_h1">Before you click, tap, or pay — scan it.</h1>
+                <p class="lead" data-i18n="hero_p">SurakshaScan checks suspicious messages, screenshots and links in
+                    seconds — built for every generation, in your own language.</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-accent" data-i18n="hero_cta1">Scan a Message — Free</a>
+                    <a href="#how" class="btn btn-outline" data-i18n="hero_cta2">See How It Works</a>
+                </div>
+                <div class="trust-row">
+                    <div class="stat"><b>50,000+</b><span data-i18n="stat1">scams caught this year</span></div>
+                    <div class="stat"><b>3</b><span data-i18n="stat2">languages supported</span></div>
+                    <div class="stat"><b>24/7</b><span data-i18n="stat3">protection, always on</span></div>
+                </div>
+            </div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="chat-bubble alert">🎉 <span data-i18n="phone_msg1">You've WON ₹50,000! Click link to
+                            claim now: bit.ly/xyz</span></div>
+                    <div class="chat-bubble">👤 <span data-i18n="phone_msg2">Wait... let me scan this first.</span>
+                    </div>
+                    <div class="verdict-card">
+                        <div class="big">⚠️ <span data-i18n="phone_verdict">High Risk — Likely Scam</span></div>
+                        <small data-i18n="phone_verdict_sub">Fake lottery pattern detected · Suspicious short
+                            link</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="feat_h2">Powerful, simple protection</h2>
+                <p data-i18n="feat_p">Everything you need to spot fraud before it costs you.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3 data-i18n="feat1_h">Smart Text Analysis</h3>
+                    <p data-i18n="feat1_p">Not just keywords — our engine reads structure, urgency and pressure tactics
+                        common in real banking and lottery scams.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <h3 data-i18n="feat2_h">Screenshot Scan<span class="badge-new">NEW</span></h3>
+                    <p data-i18n="feat2_p">Upload a screenshot of a WhatsApp or SMS message. We read the text
+                        automatically and check it instantly — no typing needed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 data-i18n="feat3_h">Community Alerts</h3>
+                    <p data-i18n="feat3_p">A live, crowdsourced list of known scam numbers, fake UPI handles and fraud
+                        links, reported by people like you.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3 data-i18n="feat4_h">Your Language, Always</h3>
+                    <p data-i18n="feat4_p">Every result and warning is explained clearly in English, Hindi or Marathi —
+                        so nothing gets lost in translation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="audience" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="aud_h2">Built for every member of the family</h2>
+                <p data-i18n="aud_p">Scams don't target one age group — so neither does our protection.</p>
+            </div>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <span class="emoji">🧒</span>
+                    <h4 data-i18n="aud1_h">Children</h4>
+                    <p data-i18n="aud1_p">Big, simple safe/unsafe signals so kids can double-check a link before they
+                        tap it.</p>
+                </div>
+                <div class="audience-card">
+                    <span class="emoji">🎧</span>
+                    <h4 data-i18n="aud2_h">Teens &amp; Students</h4>
+                    <p data-i18n="aud2_p">Catches fake job offers, prize scams and social media phishing before they
+                        take the bait.</p>
+                </div>
+                <div class="audience-card">
+                    <span class="emoji">💼</span>
+                    <h4 data-i18n="aud3_h">Working Adults</h4>
+                    <p data-i18n="aud3_p">Checks suspicious bank, UPI and delivery messages in seconds — right before
+                        you pay.</p>
+                </div>
+                <div class="audience-card">
+                    <span class="emoji">👵</span>
+                    <h4 data-i18n="aud4_h">Senior Citizens</h4>
+                    <p data-i18n="aud4_p">Large text, clear verdicts and full support in Hindi and Marathi — no jargon,
+                        no confusion.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how" class="section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="how_h2">How SurakshaScan works</h2>
+                <p data-i18n="how_p">Three simple steps, under thirty seconds.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <h4 data-i18n="step1_h">Create your account</h4>
+                    <p data-i18n="step1_p">Sign up free and get a personal dashboard that keeps a history of everything
+                        you've scanned.</p>
+                </div>
+                <div class="step">
+                    <h4 data-i18n="step2_h">Paste or upload</h4>
+                    <p data-i18n="step2_p">Paste a suspicious message, or upload a screenshot — we'll pull the text out
+                        automatically.</p>
+                </div>
+                <div class="step">
+                    <h4 data-i18n="step3_h">Get your verdict</h4>
+                    <p data-i18n="step3_p">We flag risky patterns, check our threat database, and give you a clear safe
+                        or unsafe result.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="testi_h2">Trusted by people like you</h2>
+                <p data-i18n="testi_p">Real stories from our community.</p>
+            </div>
+            <div class="testi-grid">
+                <div class="testi-card">
+                    <p data-i18n="testi1_p">"My father almost sent money to a fake bank number. SurakshaScan flagged it
+                        in Marathi, in plain words he understood."</p>
+                    <div class="testi-who">
+                        <div class="testi-avatar">R</div>
+                        <div><b data-i18n="testi1_name">Rutuja P.</b><br><span data-i18n="testi1_role">Pune</span></div>
+                    </div>
+                </div>
+                <div class="testi-card">
+                    <p data-i18n="testi2_p">"I scanned a job offer message before applying — turned out to be a scam
+                        asking for a 'registration fee'. Saved me ₹2,000."</p>
+                    <div class="testi-who">
+                        <div class="testi-avatar">A</div>
+                        <div><b data-i18n="testi2_name">Aman K.</b><br><span data-i18n="testi2_role">College
+                                Student</span></div>
+                    </div>
+                </div>
+                <div class="testi-card">
+                    <p data-i18n="testi3_p">"The screenshot feature is perfect for my grandmother — she just uploads the
+                        WhatsApp message and gets an instant answer."</p>
+                    <div class="testi-who">
+                        <div class="testi-avatar">S</div>
+                        <div><b data-i18n="testi3_name">Sana D.</b><br><span data-i18n="testi3_role">Mumbai</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="contact_h2">Still have a question?</h2>
+                <p data-i18n="contact_p">Send us a message — our safety team replies within a day.</p>
+            </div>
+            <div class="contact-wrap">
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="field"><label data-i18n="form_name">Full name</label><input type="text" required>
+                        </div>
+                        <div class="field"><label data-i18n="form_email">Email address</label><input type="email"
+                                required></div>
+                    </div>
+                    <div class="field full" style="margin-bottom:18px;">
+                        <label data-i18n="form_msg">Your message</label>
+                        <textarea required placeholder=""></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary contact-submit" data-i18n="form_submit">Send
+                        Message</button>
+                </form>
+                <div class="form-success" id="formSuccess">
+                    <div class="check">✅</div>
+                    <h3 data-i18n="form_success_h">Message received!</h3>
+                    <p data-i18n="form_success_p" style="color:var(--ink-soft);">Thanks for reaching out — our team will
+                        get back to you soon.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="brand">Suraksha<em>Scan</em></div>
+                <p data-i18n="footer_about">Helping every generation stay one step ahead of digital fraud — in the
+                    language you're most comfortable in.</p>
+                <div class="social-row">
+                    <a href="#" aria-label="Twitter/X"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-6.6L4.5 22H1.4l8.1-9.3L1 2h7l4.9 6.1L18.9 2zm-1.2 18h1.9L7.4 4H5.4l12.3 16z" />
+                        </svg></a>
+                    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 2c2.7 0 3 0 4.1.06 1.1.05 1.8.22 2.4.46.6.24 1.1.56 1.6 1.06.5.5.82 1 1.06 1.6.24.6.41 1.3.46 2.4.06 1.1.06 1.4.06 4.1s0 3-.06 4.1c-.05 1.1-.22 1.8-.46 2.4a4.3 4.3 0 0 1-1.06 1.6 4.3 4.3 0 0 1-1.6 1.06c-.6.24-1.3.41-2.4.46C15 22 14.7 22 12 22s-3 0-4.1-.06c-1.1-.05-1.8-.22-2.4-.46a4.3 4.3 0 0 1-1.6-1.06 4.3 4.3 0 0 1-1.06-1.6c-.24-.6-.41-1.3-.46-2.4C2 15 2 14.7 2 12s0-3 .06-4.1c.05-1.1.22-1.8.46-2.4.24-.6.56-1.1 1.06-1.6.5-.5 1-.82 1.6-1.06.6-.24 1.3-.41 2.4-.46C9 2 9.3 2 12 2zm0 1.8c-2.65 0-2.96 0-4 .06-.87.04-1.34.18-1.65.3-.42.16-.72.36-1.03.67-.31.31-.51.61-.67 1.03-.12.31-.26.78-.3 1.65-.06 1.04-.06 1.35-.06 4s0 2.96.06 4c.04.87.18 1.34.3 1.65.16.42.36.72.67 1.03.31.31.61.51 1.03.67.31.12.78.26 1.65.3 1.04.06 1.35.06 4 .06s2.96 0 4-.06c.87-.04 1.34-.18 1.65-.3.42-.16.72-.36 1.03-.67.31-.31.51-.61.67-1.03.12-.31.26-.78.3-1.65.06-1.04.06-1.35.06-4s0-2.96-.06-4c-.04-.87-.18-1.34-.3-1.65a2.5 2.5 0 0 0-.67-1.03 2.5 2.5 0 0 0-1.03-.67c-.31-.12-.78-.26-1.65-.3-1.04-.06-1.35-.06-4-.06zm0 3.5a4.7 4.7 0 1 1 0 9.4 4.7 4.7 0 0 1 0-9.4zm0 1.8a2.9 2.9 0 1 0 0 5.8 2.9 2.9 0 0 0 0-5.8zm5.9-2a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0z" />
+                        </svg></a>
+                    <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.25-1.5 1.55-1.5H16.7V3.7C16.4 3.66 15.4 3.6 14.2 3.6c-2.5 0-4.2 1.5-4.2 4.3v2H7.3v3.1h2.7V21h3.5z" />
+                        </svg></a>
+                    <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M23 12s0-3.2-.4-4.7c-.24-.9-.94-1.6-1.83-1.84C19.2 5 12 5 12 5s-7.2 0-8.77.46c-.9.24-1.6.94-1.83 1.84C1 8.8 1 12 1 12s0 3.2.4 4.7c.24.9.94 1.6 1.83 1.84C4.8 19 12 19 12 19s7.2 0 8.77-.46c.9-.24 1.6-.94 1.83-1.84C23 15.2 23 12 23 12zM9.7 15.3V8.7L15.8 12l-6.1 3.3z" />
+                        </svg></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h5 data-i18n="footer_product">Product</h5>
+                <a href="#features" data-i18n="nav_features">Features</a>
+                <a href="#audience" data-i18n="nav_audience">Who it's for</a>
+                <a href="#how" data-i18n="nav_how">How it Works</a>
+            </div>
+            <div class="footer-col">
+                <h5 data-i18n="footer_company">Company</h5>
+                <a href="#" data-i18n="footer_about_link">About Us</a>
+                <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+                <a href="#contact" data-i18n="nav_contact">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h5 data-i18n="footer_help">Need Help?</h5>
+                <a href="mailto:support@surakshascan.example">support@surakshascan.example</a>
+                <a href="tel:+911234567890">+91 12345 67890</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 SurakshaScan. <span data-i18n="footer_tag">Protecting citizens from cyber fraud.</span></span>
+            <span data-i18n="footer_made">Made with care, in India.</span>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                nav_features: "Features", nav_audience: "Who it's for", nav_how: "How it Works", nav_contact: "Contact",
+                nav_signin: "Sign In", nav_start: "Get Started",
+                hero_badge: "Live threat database updated daily",
+                hero_h1: "Before you click, tap, or pay — scan it.",
+                hero_p: "SurakshaScan checks suspicious messages, screenshots and links in seconds — built for every generation, in your own language.",
+                hero_cta1: "Scan a Message — Free", hero_cta2: "See How It Works",
+                stat1: "scams caught this year", stat2: "languages supported", stat3: "protection, always on",
+                phone_msg1: "You've WON ₹50,000! Click link to claim now: bit.ly/xyz",
+                phone_msg2: "Wait... let me scan this first.",
+                phone_verdict: "High Risk — Likely Scam",
+                phone_verdict_sub: "Fake lottery pattern detected · Suspicious short link",
+                feat_h2: "Powerful, simple protection", feat_p: "Everything you need to spot fraud before it costs you.",
+                feat1_h: "Smart Text Analysis", feat1_p: "Not just keywords — our engine reads structure, urgency and pressure tactics common in real banking and lottery scams.",
+                feat2_h: "Screenshot Scan", feat2_p: "Upload a screenshot of a WhatsApp or SMS message. We read the text automatically and check it instantly — no typing needed.",
+                feat3_h: "Community Alerts", feat3_p: "A live, crowdsourced list of known scam numbers, fake UPI handles and fraud links, reported by people like you.",
+                feat4_h: "Your Language, Always", feat4_p: "Every result and warning is explained clearly in English, Hindi or Marathi — so nothing gets lost in translation.",
+                aud_h2: "Built for every member of the family", aud_p: "Scams don't target one age group — so neither does our protection.",
+                aud1_h: "Children", aud1_p: "Big, simple safe/unsafe signals so kids can double-check a link before they tap it.",
+                aud2_h: "Teens & Students", aud2_p: "Catches fake job offers, prize scams and social media phishing before they take the bait.",
+                aud3_h: "Working Adults", aud3_p: "Checks suspicious bank, UPI and delivery messages in seconds — right before you pay.",
+                aud4_h: "Senior Citizens", aud4_p: "Large text, clear verdicts and full support in Hindi and Marathi — no jargon, no confusion.",
+                how_h2: "How SurakshaScan works", how_p: "Three simple steps, under thirty seconds.",
+                step1_h: "Create your account", step1_p: "Sign up free and get a personal dashboard that keeps a history of everything you've scanned.",
+                step2_h: "Paste or upload", step2_p: "Paste a suspicious message, or upload a screenshot — we'll pull the text out automatically.",
+                step3_h: "Get your verdict", step3_p: "We flag risky patterns, check our threat database, and give you a clear safe or unsafe result.",
+                testi_h2: "Trusted by people like you", testi_p: "Real stories from our community.",
+                testi1_p: "\"My father almost sent money to a fake bank number. SurakshaScan flagged it in Marathi, in plain words he understood.\"",
+                testi1_name: "Rutuja P.", testi1_role: "Pune",
+                testi2_p: "\"I scanned a job offer message before applying — turned out to be a scam asking for a 'registration fee'. Saved me ₹2,000.\"",
+                testi2_name: "Aman K.", testi2_role: "College Student",
+                testi3_p: "\"The screenshot feature is perfect for my grandmother — she just uploads the WhatsApp message and gets an instant answer.\"",
+                testi3_name: "Sana D.", testi3_role: "Mumbai",
+                contact_h2: "Still have a question?", contact_p: "Send us a message — our safety team replies within a day.",
+                form_name: "Full name", form_email: "Email address", form_msg: "Your message", form_submit: "Send Message",
+                form_success_h: "Message received!", form_success_p: "Thanks for reaching out — our team will get back to you soon.",
+                footer_about: "Helping every generation stay one step ahead of digital fraud — in the language you're most comfortable in.",
+                footer_product: "Product", footer_company: "Company", footer_help: "Need Help?",
+                footer_about_link: "About Us", footer_privacy: "Privacy Policy",
+                footer_tag: "Protecting citizens from cyber fraud.", footer_made: "Made with care, in India."
+            },
+            hi: {
+                nav_features: "विशेषताएं", nav_audience: "किसके लिए", nav_how: "कैसे काम करता है", nav_contact: "संपर्क करें",
+                nav_signin: "साइन इन", nav_start: "शुरू करें",
+                hero_badge: "रोज़ अपडेट होने वाला लाइव खतरा डेटाबेस",
+                hero_h1: "क्लिक करने, टैप करने या पैसे भेजने से पहले — स्कैन करें।",
+                hero_p: "SurakshaScan संदिग्ध मैसेज, स्क्रीनशॉट और लिंक को सेकंडों में जांचता है — हर उम्र के लिए, आपकी अपनी भाषा में।",
+                hero_cta1: "मुफ़्त में मैसेज स्कैन करें", hero_cta2: "यह कैसे काम करता है देखें",
+                stat1: "इस साल पकड़े गए स्कैम", stat2: "समर्थित भाषाएं", stat3: "हमेशा चालू सुरक्षा",
+                phone_msg1: "आपने ₹50,000 जीते हैं! अभी दावा करने के लिए लिंक पर क्लिक करें: bit.ly/xyz",
+                phone_msg2: "रुको... पहले इसे स्कैन कर लेता हूं।",
+                phone_verdict: "उच्च जोखिम — संभावित धोखाधड़ी",
+                phone_verdict_sub: "फर्जी लॉटरी पैटर्न मिला · संदिग्ध छोटा लिंक",
+                feat_h2: "शक्तिशाली, सरल सुरक्षा", feat_p: "धोखाधड़ी पकड़ने के लिए जो कुछ भी चाहिए, वह सब यहां है।",
+                feat1_h: "स्मार्ट टेक्स्ट विश्लेषण", feat1_p: "सिर्फ शब्द नहीं — हमारा इंजन बैंकिंग और लॉटरी स्कैम में आम बनावट, जल्दबाज़ी और दबाव के तरीकों को पहचानता है।",
+                feat2_h: "स्क्रीनशॉट स्कैन", feat2_p: "WhatsApp या SMS मैसेज का स्क्रीनशॉट अपलोड करें। हम टेक्स्ट अपने आप पढ़कर तुरंत जांच देते हैं — टाइप करने की ज़रूरत नहीं।",
+                feat3_h: "सामुदायिक अलर्ट", feat3_p: "जाने-पहचाने स्कैम नंबर, नकली UPI आईडी और धोखाधड़ी लिंक की लाइव सूची, आप जैसे लोगों द्वारा रिपोर्ट की गई।",
+                feat4_h: "हमेशा आपकी भाषा में", feat4_p: "हर नतीजा और चेतावनी अंग्रेज़ी, हिंदी या मराठी में स्पष्ट रूप से समझाई जाती है — कुछ भी भाषा में उलझे नहीं।",
+                aud_h2: "परिवार के हर सदस्य के लिए बनाया गया", aud_p: "स्कैम किसी एक उम्र को नहीं देखते — इसलिए हमारी सुरक्षा भी नहीं देखती।",
+                aud1_h: "बच्चे", aud1_p: "बड़े, सरल सुरक्षित/असुरक्षित संकेत ताकि बच्चे लिंक पर टैप करने से पहले जांच सकें।",
+                aud2_h: "किशोर और छात्र", aud2_p: "फर्जी नौकरी ऑफर, इनाम स्कैम और सोशल मीडिया फिशिंग को झांसे में आने से पहले पकड़ता है।",
+                aud3_h: "कामकाजी वयस्क", aud3_p: "पैसे भेजने से ठीक पहले संदिग्ध बैंक, UPI और डिलीवरी मैसेज को सेकंडों में जांचता है।",
+                aud4_h: "वरिष्ठ नागरिक", aud4_p: "बड़ा टेक्स्ट, स्पष्ट नतीजे और हिंदी व मराठी में पूरा समर्थन — कोई जटिल शब्द नहीं, कोई उलझन नहीं।",
+                how_h2: "SurakshaScan कैसे काम करता है", how_p: "तीन आसान चरण, तीस सेकंड से कम में।",
+                step1_h: "अपना खाता बनाएं", step1_p: "मुफ़्त साइन अप करें और एक पर्सनल डैशबोर्ड पाएं जो आपके सभी स्कैन का इतिहास रखता है।",
+                step2_h: "पेस्ट करें या अपलोड करें", step2_p: "संदिग्ध मैसेज पेस्ट करें, या स्क्रीनशॉट अपलोड करें — हम टेक्स्ट अपने आप निकाल लेंगे।",
+                step3_h: "अपना नतीजा पाएं", step3_p: "हम जोखिम भरे पैटर्न को चिह्नित करते हैं, अपने डेटाबेस से मिलान करते हैं, और स्पष्ट सुरक्षित/असुरक्षित नतीजा देते हैं।",
+                testi_h2: "आप जैसे लोगों का भरोसा", testi_p: "हमारे समुदाय की सच्ची कहानियां।",
+                testi1_p: "\"मेरे पिताजी लगभग एक नकली बैंक नंबर पर पैसे भेजने वाले थे। SurakshaScan ने इसे मराठी में, आसान शब्दों में चेतावनी दी।\"",
+                testi1_name: "रुतुजा पी.", testi1_role: "पुणे",
+                testi2_p: "\"मैंने आवेदन करने से पहले एक नौकरी ऑफर मैसेज स्कैन किया — यह 'रजिस्ट्रेशन फीस' मांगने वाला स्कैम निकला। ₹2,000 बच गए।\"",
+                testi2_name: "अमन के.", testi2_role: "कॉलेज छात्र",
+                testi3_p: "\"स्क्रीनशॉट फीचर मेरी दादी के लिए एकदम सही है — वह बस WhatsApp मैसेज अपलोड करती हैं और तुरंत जवाब पाती हैं।\"",
+                testi3_name: "साना डी.", testi3_role: "मुंबई",
+                contact_h2: "अभी भी कोई सवाल है?", contact_p: "हमें मैसेज भेजें — हमारी सुरक्षा टीम एक दिन के भीतर जवाब देगी।",
+                form_name: "पूरा नाम", form_email: "ईमेल पता", form_msg: "आपका संदेश", form_submit: "संदेश भेजें",
+                form_success_h: "संदेश मिल गया!", form_success_p: "संपर्क करने के लिए धन्यवाद — हमारी टीम जल्द ही आपसे संपर्क करेगी।",
+                footer_about: "हर पीढ़ी को डिजिटल धोखाधड़ी से एक कदम आगे रहने में मदद करना — आपकी सबसे सहज भाषा में।",
+                footer_product: "उत्पाद", footer_company: "कंपनी", footer_help: "मदद चाहिए?",
+                footer_about_link: "हमारे बारे में", footer_privacy: "गोपनीयता नीति",
+                footer_tag: "नागरिकों को साइबर धोखाधड़ी से बचाना।", footer_made: "भारत में, देखभाल के साथ बनाया गया।"
+            },
+            mr: {
+                nav_features: "वैशिष्ट्ये", nav_audience: "कोणासाठी", nav_how: "कसे कार्य करते", nav_contact: "संपर्क",
+                nav_signin: "साइन इन", nav_start: "सुरू करा",
+                hero_badge: "दररोज अपडेट होणारा लाइव्ह धोका डेटाबेस",
+                hero_h1: "क्लिक करण्यापूर्वी, टॅप करण्यापूर्वी किंवा पैसे पाठवण्यापूर्वी — स्कॅन करा.",
+                hero_p: "SurakshaScan संशयास्पद मेसेज, स्क्रीनशॉट आणि लिंक्स काही सेकंदात तपासते — प्रत्येक पिढीसाठी, तुमच्या स्वतःच्या भाषेत.",
+                hero_cta1: "मोफत मेसेज स्कॅन करा", hero_cta2: "हे कसे कार्य करते ते पहा",
+                stat1: "या वर्षी पकडलेले स्कॅम", stat2: "समर्थित भाषा", stat3: "नेहमी सुरू असलेले संरक्षण",
+                phone_msg1: "तुम्ही ₹50,000 जिंकले आहेत! आत्ताच दावा करण्यासाठी लिंकवर क्लिक करा: bit.ly/xyz",
+                phone_msg2: "थांबा... आधी हे स्कॅन करून बघतो.",
+                phone_verdict: "उच्च धोका — संभाव्य फसवणूक",
+                phone_verdict_sub: "बनावट लॉटरी पॅटर्न आढळला · संशयास्पद छोटी लिंक",
+                feat_h2: "शक्तिशाली, सोपे संरक्षण", feat_p: "फसवणूक ओळखण्यासाठी लागणारे सर्व काही येथे आहे.",
+                feat1_h: "स्मार्ट मजकूर विश्लेषण", feat1_p: "फक्त शब्द नाही — आमचे इंजिन बँकिंग आणि लॉटरी स्कॅममध्ये आढळणारी रचना, घाई आणि दबावाच्या पद्धती ओळखते.",
+                feat2_h: "स्क्रीनशॉट स्कॅन", feat2_p: "WhatsApp किंवा SMS मेसेजचा स्क्रीनशॉट अपलोड करा. आम्ही मजकूर आपोआप वाचून लगेच तपासतो — टाइप करण्याची गरज नाही.",
+                feat3_h: "सामुदायिक सूचना", feat3_p: "ओळखीचे स्कॅम नंबर, बनावट UPI हँडल्स आणि फसवणूक लिंक्सची लाइव्ह यादी, तुमच्यासारख्या लोकांनी नोंदवलेली.",
+                feat4_h: "नेहमी तुमच्या भाषेत", feat4_p: "प्रत्येक निकाल आणि इशारा इंग्रजी, हिंदी किंवा मराठीत स्पष्टपणे समजावला जातो — भाषेत काहीही हरवत नाही.",
+                aud_h2: "कुटुंबातील प्रत्येकासाठी तयार केलेले", aud_p: "स्कॅम एका वयोगटाला लक्ष्य करत नाहीत — म्हणून आमचे संरक्षणही करत नाही.",
+                aud1_h: "मुले", aud1_p: "मोठे, सोपे सुरक्षित/असुरक्षित संकेत जेणेकरून मुले लिंकवर टॅप करण्यापूर्वी तपासू शकतील.",
+                aud2_h: "किशोरवयीन आणि विद्यार्थी", aud2_p: "बनावट नोकरीच्या ऑफर, बक्षीस स्कॅम आणि सोशल मीडिया फिशिंग सापळ्यात अडकण्यापूर्वी पकडते.",
+                aud3_h: "कामकाजी प्रौढ", aud3_p: "पैसे पाठवण्यापूर्वीच संशयास्पद बँक, UPI आणि डिलिव्हरी मेसेज सेकंदात तपासते.",
+                aud4_h: "ज्येष्ठ नागरिक", aud4_p: "मोठा मजकूर, स्पष्ट निकाल आणि हिंदी व मराठीत संपूर्ण आधार — कठीण शब्द नाहीत, गोंधळ नाही.",
+                how_h2: "SurakshaScan कसे कार्य करते", how_p: "तीन सोप्या पायऱ्या, तीस सेकंदांपेक्षा कमी वेळात.",
+                step1_h: "तुमचे खाते तयार करा", step1_p: "मोफत साइन अप करा आणि तुम्ही स्कॅन केलेल्या सर्व गोष्टींचा इतिहास ठेवणारा वैयक्तिक डॅशबोर्ड मिळवा.",
+                step2_h: "पेस्ट करा किंवा अपलोड करा", step2_p: "संशयास्पद मेसेज पेस्ट करा, किंवा स्क्रीनशॉट अपलोड करा — आम्ही मजकूर आपोआप काढू.",
+                step3_h: "तुमचा निकाल मिळवा", step3_p: "आम्ही धोकादायक पॅटर्न ओळखतो, आमच्या डेटाबेसशी जुळवतो आणि स्पष्ट सुरक्षित/असुरक्षित निकाल देतो.",
+                testi_h2: "तुमच्यासारख्या लोकांचा विश्वास", testi_p: "आमच्या समुदायाच्या खऱ्या गोष्टी.",
+                testi1_p: "\"माझे वडील जवळजवळ एका बनावट बँक नंबरवर पैसे पाठवणार होते. SurakshaScan ने ते मराठीत, सोप्या शब्दांत सांगितले.\"",
+                testi1_name: "रुतुजा पी.", testi1_role: "पुणे",
+                testi2_p: "\"अर्ज करण्यापूर्वी मी एक नोकरीची ऑफर स्कॅन केली — ती 'नोंदणी शुल्क' मागणारी फसवणूक निघाली. ₹2,000 वाचले.\"",
+                testi2_name: "अमन के.", testi2_role: "महाविद्यालयीन विद्यार्थी",
+                testi3_p: "\"स्क्रीनशॉट वैशिष्ट्य माझ्या आजीसाठी एकदम योग्य आहे — ती फक्त WhatsApp मेसेज अपलोड करते आणि लगेच उत्तर मिळवते.\"",
+                testi3_name: "साना डी.", testi3_role: "मुंबई",
+                contact_h2: "अजूनही काही प्रश्न आहे?", contact_p: "आम्हाला मेसेज पाठवा — आमची सुरक्षा टीम एका दिवसात उत्तर देईल.",
+                form_name: "पूर्ण नाव", form_email: "ईमेल पत्ता", form_msg: "तुमचा संदेश", form_submit: "संदेश पाठवा",
+                form_success_h: "संदेश मिळाला!", form_success_p: "संपर्क साधल्याबद्दल धन्यवाद — आमची टीम लवकरच तुमच्याशी संपर्क साधेल.",
+                footer_about: "प्रत्येक पिढीला डिजिटल फसवणुकीपासून एक पाऊल पुढे राहण्यास मदत करणे — तुम्हाला सर्वात सोयीस्कर असलेल्या भाषेत.",
+                footer_product: "उत्पादन", footer_company: "कंपनी", footer_help: "मदत हवी आहे?",
+                footer_about_link: "आमच्याबद्दल", footer_privacy: "गोपनीयता धोरण",
+                footer_tag: "नागरिकांना सायबर फसवणुकीपासून वाचवणे.", footer_made: "भारतात, काळजीपूर्वक बनवले."
+            }
+        };
+
+        function setLang(lang) {
+            document.documentElement.setAttribute('data-lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+            });
+        }
+        document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang-btn')));
+        });
+
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            this.style.display = 'none';
+            document.getElementById('formSuccess').classList.add('show');
+        });
+    </script>
+</body>
+
+</html>
