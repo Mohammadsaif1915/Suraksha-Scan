@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!-- Forces SameSite=None and Secure for cross-origin JSESSIONID cookies -->
+    <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor" 
+                     sameSiteCookies="none" />
+</Context>
